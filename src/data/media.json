@@ -332,6 +332,87 @@
       "description": "A friendly interview with a different scientist each week. Something to put in your ears that is interesting but asks nothing of you."
     },
     {
+      "id": "normal-gossip",
+      "title": "Normal Gossip",
+      "type": "podcast",
+      "intensity": 1,
+      "tags": ["low-stakes", "comedy", "connection"],
+      "description": "A stranger's second hand gossip about people you will never meet. Absorbing and completely inconsequential."
+    },
+    {
+      "id": "youre-wrong-about",
+      "title": "You're Wrong About",
+      "type": "podcast",
+      "intensity": 2,
+      "tags": ["justice", "women-winning"],
+      "description": "Two journalists revisit women the media destroyed and explain what actually happened. Quietly furious on their behalf."
+    },
+    {
+      "id": "off-menu",
+      "title": "Off Menu",
+      "type": "podcast",
+      "intensity": 1,
+      "tags": ["comedy", "low-stakes", "warmth"],
+      "description": "Two comedians ask a guest for their dream meal. Silly, warm, and nothing is at stake."
+    },
+    {
+      "id": "yes-please-audio",
+      "title": "Yes Please - Amy Poehler",
+      "type": "audiobook",
+      "intensity": 1,
+      "tags": ["comedy", "women-winning", "warmth"],
+      "description": "Read by the author with guests dropping in. Closer to a comedy record than a book."
+    },
+    {
+      "id": "born-a-crime-audio",
+      "title": "Born a Crime - Trevor Noah",
+      "type": "audiobook",
+      "intensity": 2,
+      "tags": ["comedy", "warmth", "connection"],
+      "description": "Read by the author, who does every voice. Very funny, and centred on a mother who refused to be beaten.",
+      "contentNote": "Includes domestic violence in the final chapters."
+    },
+    {
+      "id": "anne-audio",
+      "title": "Anne of Green Gables - L. M. Montgomery",
+      "type": "audiobook",
+      "intensity": 1,
+      "tags": ["gentle", "warmth", "low-stakes"],
+      "description": "Free in the public domain in most places. Comfort listening you can fall asleep to."
+    },
+    {
+      "id": "bob-ross-video",
+      "title": "Bob Ross - The Joy of Painting",
+      "type": "video",
+      "intensity": 1,
+      "tags": ["gentle", "low-stakes", "warmth"],
+      "description": "Free, full episodes, a soft voice and no happy accidents that cannot be fixed. The original calm channel."
+    },
+    {
+      "id": "yoga-adriene-video",
+      "title": "Yoga With Adriene",
+      "type": "video",
+      "intensity": 1,
+      "tags": ["gentle", "low-stakes", "warmth"],
+      "description": "Free, no equipment, and openly kind about days when you can barely get on the mat."
+    },
+    {
+      "id": "tiny-desk",
+      "title": "NPR Tiny Desk Concerts",
+      "type": "video",
+      "intensity": 1,
+      "tags": ["gentle", "warmth", "low-stakes"],
+      "description": "One band, one small room, no crowd. Fifteen minutes each and hundreds to pick from."
+    },
+    {
+      "id": "babish",
+      "title": "Binging with Babish",
+      "type": "video",
+      "intensity": 1,
+      "tags": ["low-stakes", "gentle"],
+      "description": "Someone cooks food from films, calmly, with no drama. Good background for doing nothing."
+    },
+    {
       "id": "renaissance",
       "title": "Beyoncé - Renaissance",
       "type": "music",

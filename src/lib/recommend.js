@@ -40,6 +40,20 @@ export const TAG_LABELS = {
   'low-stakes': 'low stakes',
 };
 
+// Which catalogue types belong to each format the user can ask for. Keeping
+// this here rather than in the screen means the split is testable.
+export const FORMAT_TYPES = {
+  watch: ['film', 'series', 'video'],
+  listen: ['music', 'podcast', 'audiobook'],
+  read: ['book'],
+};
+
+export const FORMAT_LABELS = {
+  watch: 'Something to watch',
+  listen: 'Something to listen to',
+  read: 'Something to read',
+};
+
 // How much each acuity level counts toward "this person is in a rough spot".
 const ACUITY_WEIGHT = { high: 1, medium: 0.5, low: 0 };
 
@@ -154,7 +168,7 @@ export function feedbackTags(feedback, catalog, protectedTags = []) {
  * @param {number} input.limit         how many cards to return
  * @returns {{ pressure, label, items, hiddenCount }} items sorted, best first
  */
-export function recommend({ mood, recentAcuity = [], feedback = [], limit = 6 }) {
+export function recommend({ mood, recentAcuity = [], feedback = [], format = null, limit = 6 }) {
   const pressure = acuityPressure(recentAcuity);
   const label = pressureLabel(pressure, recentAcuity.length > 0);
 
@@ -172,8 +186,12 @@ export function recommend({ mood, recentAcuity = [], feedback = [], limit = 6 })
   const answeredIds = feedback.map((f) => f.mediaId);
   const rejectedIds = feedback.filter((f) => !f.liked).map((f) => f.mediaId);
 
+  const allowedTypes = format ? FORMAT_TYPES[format] : null;
+
   const eligible = catalog.filter((item) => {
     if (answeredIds.includes(item.id)) return false;
+    // Only the format they asked for: watch, listen or read.
+    if (allowedTypes && !allowedTypes.includes(item.type)) return false;
     // Under high pressure, the most intense material is removed too.
     if (label === 'high' && item.intensity >= 3) return false;
     return true;
@@ -226,6 +244,13 @@ export function linkFor(item) {
       // A plain web search always returns something useful here, including
       // libraries, shops and the author's own page.
       return { label: 'Find this book', url: `https://www.google.com/search?q=${q}+book` };
+    case 'audiobook':
+      return { label: 'Find the audiobook', url: `https://www.google.com/search?q=${q}+audiobook` };
+    case 'video':
+      return {
+        label: 'Watch on YouTube',
+        url: `https://www.youtube.com/results?search_query=${q}`,
+      };
     case 'music':
     case 'podcast':
       return { label: 'Listen on Spotify', url: `https://open.spotify.com/search/${q}` };

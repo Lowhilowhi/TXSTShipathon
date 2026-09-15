@@ -1,72 +1,164 @@
-// One screen: pick how you are, see what helps, immediately.
+// The one screen that asks, in order:
+//   1. Where are you right now          -> mood
+//   2. What do you want to do           -> intent
+//   3. If staying in, what kind         -> format
+//   4. Here is what fits, and why
 //
-// The check in and the recommendations used to be two routes. They are merged
-// because the whole point is that one drives the other, and you cannot see that
-// happen if it takes a navigation to find out.
-//
-// This screen holds no matching logic of its own. It reads shared state, hands
-// it to the pure engine in src/lib/recommend.js, and renders the result.
+// Each question only appears once the one above it is answered, so it is never
+// a wall of choices. This screen holds no matching logic; that lives in the
+// pure functions in src/lib/recommend.js.
 
 import { useRouter } from 'expo-router';
 import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { linkFor, recommend } from '@/lib/recommend';
+import MediaCard from '@/components/media-card';
+import activities from '@/data/activities.json';
+import resources from '@/data/resources.json';
+import { FORMAT_LABELS, recommend } from '@/lib/recommend';
 import { useAppState } from '@/lib/state';
 import { acuityColors, colors, maxWidth, radius, space } from '@/lib/theme';
 
-// The key must match the moods handled in src/lib/recommend.js.
-// Each option names the feeling and what it will get you, so picking one is a
-// choice about your evening rather than a self diagnosis.
-const OPTIONS = [
-  { key: 'spiraling', label: 'I cannot stop thinking', want: 'Give me something loud enough to drown it out' },
-  { key: 'hollow', label: 'I feel empty', want: 'Give me people being good to each other' },
-  { key: 'angry', label: 'I am furious', want: 'Give me a woman who wins' },
-  { key: 'numb', label: 'I feel nothing', want: 'Give me something easy that asks nothing' },
+const MOODS = [
+  { key: 'spiraling', label: 'I cannot stop thinking', want: 'Something loud enough to drown it out' },
+  { key: 'hollow', label: 'I feel empty', want: 'People being good to each other' },
+  { key: 'angry', label: 'I am furious', want: 'A woman who wins' },
+  { key: 'numb', label: 'I feel nothing', want: 'Something easy that asks nothing' },
 ];
+
+const INTENTS = [
+  { key: 'in', label: 'Nothing. I am a homebody', want: 'Give me something to watch, listen to or read' },
+  { key: 'hands', label: 'Something to do with my hands', want: 'Calm, repetitive, no decisions' },
+  { key: 'out', label: 'Actually get out of the house', want: 'Small plans that are easy to abandon' },
+  { key: 'people', label: 'Be around people who get it', want: 'Survivor groups and peer support near you' },
+];
+
+const FORMATS = ['watch', 'listen', 'read'];
 
 export default function RightNowScreen() {
   const router = useRouter();
-  const { mood, recentAcuity, feedback, recordMood, recordFeedback, clearFeedback } = useAppState();
-  const { label, items, hiddenCount, savedCount } = recommend({ mood, recentAcuity, feedback });
+  const {
+    mood,
+    intent,
+    format,
+    recentAcuity,
+    feedback,
+    recordMood,
+    recordIntent,
+    recordFormat,
+    recordFeedback,
+    clearFeedback,
+  } = useAppState();
+
+  const { label, items, hiddenCount, savedCount } = recommend({
+    mood,
+    recentAcuity,
+    feedback,
+    format,
+  });
+
+  const supportResources = resources.filter((r) => r.acuity === 'low');
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <View style={styles.inner}>
+        <Text style={styles.step}>Step 1</Text>
         <Text style={styles.title}>Where are you right now?</Text>
-        <Text style={styles.subtitle}>
-          Tap one. The list underneath changes as soon as you do, and you can change your mind as
-          often as you want.
-        </Text>
-
         <View style={styles.options}>
-          {OPTIONS.map((option) => {
-            const selected = mood === option.key;
-            return (
-              <Pressable
-                key={option.key}
-                onPress={() => recordMood(option.key)}
-                style={({ pressed }) => [
-                  styles.option,
-                  selected && styles.optionSelected,
-                  pressed && styles.pressed,
-                ]}>
-                <Text style={[styles.optionLabel, selected && styles.optionLabelSelected]}>
-                  {option.label}
-                </Text>
-                <Text style={[styles.optionWant, selected && styles.optionWantSelected]}>
-                  {option.want}
-                </Text>
-              </Pressable>
-            );
-          })}
+          {MOODS.map((option) => (
+            <Option
+              key={option.key}
+              option={option}
+              selected={mood === option.key}
+              onPress={() => recordMood(option.key)}
+            />
+          ))}
         </View>
 
-        {!mood ? (
-          <Text style={styles.empty}>
-            Nothing is suggested until you pick one, because every card here has to be able to say
-            why it was chosen.
-          </Text>
-        ) : (
+        {mood ? (
+          <>
+            <Text style={styles.step}>Step 2</Text>
+            <Text style={styles.title}>What do you want to do?</Text>
+            <View style={styles.options}>
+              {INTENTS.map((option) => (
+                <Option
+                  key={option.key}
+                  option={option}
+                  selected={intent === option.key}
+                  onPress={() => recordIntent(option.key)}
+                />
+              ))}
+            </View>
+          </>
+        ) : null}
+
+        {intent === 'in' ? (
+          <>
+            <Text style={styles.step}>Step 3</Text>
+            <Text style={styles.title}>What kind?</Text>
+            <View style={styles.formatRow}>
+              {FORMATS.map((key) => (
+                <Pressable
+                  key={key}
+                  onPress={() => recordFormat(key)}
+                  style={({ pressed }) => [
+                    styles.format,
+                    format === key && styles.formatSelected,
+                    pressed && styles.pressed,
+                  ]}>
+                  <Text style={[styles.formatText, format === key && styles.formatTextSelected]}>
+                    {FORMAT_LABELS[key]}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </>
+        ) : null}
+
+        {intent === 'hands' ? (
+          <SimpleList
+            title="Things to do with your hands"
+            blurb="None of these need anyone else, and all of them can be abandoned halfway."
+            entries={activities.hands}
+            renderMeta={(entry) => entry.search}
+            onOpen={(entry) =>
+              Linking.openURL(
+                `https://www.youtube.com/results?search_query=${encodeURIComponent(entry.search)}`
+              )
+            }
+            openLabel="Look this up"
+          />
+        ) : null}
+
+        {intent === 'out' ? (
+          <SimpleList
+            title="Small ways out of the house"
+            blurb="Prompts, not places. Pick one and decide the where when you are already up."
+            entries={activities.outing}
+            renderMeta={(entry) => entry.effort}
+          />
+        ) : null}
+
+        {intent === 'people' ? (
+          <View style={styles.group}>
+            <Text style={styles.groupTitle}>People who get it</Text>
+            <Text style={styles.groupBlurb}>
+              These are the support level services from the directory. Talking to any of them starts
+              no report.
+            </Text>
+            {supportResources.map((resource) => (
+              <Pressable
+                key={resource.id}
+                onPress={() => router.push(`/resource/${resource.id}`)}
+                style={({ pressed }) => [styles.entry, pressed && styles.pressed]}>
+                <Text style={styles.entryTitle}>{resource.name}</Text>
+                <Text style={styles.entryBody}>{resource.whatItDoes}</Text>
+                <Text style={styles.entryMeta}>{resource.doesNotRequire}</Text>
+              </Pressable>
+            ))}
+          </View>
+        ) : null}
+
+        {intent === 'in' && format ? (
           <>
             <View style={styles.stateBar}>
               <Text style={styles.stateLabel}>Picked using</Text>
@@ -79,6 +171,9 @@ export default function RightNowScreen() {
                     style={[styles.chipText, { color: acuityColors[label] ?? colors.textSoft }]}>
                     acuity: {label}
                   </Text>
+                </View>
+                <View style={styles.chip}>
+                  <Text style={[styles.chipText, { color: colors.textSoft }]}>{format}</Text>
                 </View>
               </View>
               <Text style={styles.stateNote}>
@@ -94,11 +189,9 @@ export default function RightNowScreen() {
               <View style={styles.changed}>
                 <Text style={styles.changedText}>
                   {savedCount > 0
-                    ? `${savedCount} saved to your library and ${savedCount === 1 ? 'it is' : 'they are'} out of this list. `
+                    ? `${savedCount} in your library. `
                     : ''}
-                  {hiddenCount > 0
-                    ? `${hiddenCount} ${hiddenCount === 1 ? 'title is' : 'titles are'} gone because you said no. `
-                    : ''}
+                  {hiddenCount > 0 ? `${hiddenCount} skipped. ` : ''}
                   New ones took their place, and anything like what you saved moved up.
                 </Text>
                 <View style={styles.changedActions}>
@@ -118,69 +211,84 @@ export default function RightNowScreen() {
               </View>
             ) : null}
 
-            {items.map((item) => {
-              const link = linkFor(item);
-              return (
-                <View key={item.id} style={styles.card}>
-                  <Text style={styles.cardType}>{item.type}</Text>
-                  <Text style={styles.cardTitle}>{item.title}</Text>
-                  <Text style={styles.cardBody}>{item.description}</Text>
+            {items.length === 0 ? (
+              <Text style={styles.empty}>
+                You have been through everything in this format. Try another one, or start the list
+                over.
+              </Text>
+            ) : null}
 
-                  {item.contentNote ? (
-                    <View style={styles.noteBlock}>
-                      <Text style={styles.noteLabel}>Heads up</Text>
-                      <Text style={styles.noteBody}>{item.contentNote}</Text>
-                    </View>
-                  ) : null}
-
-                  <View style={styles.why}>
-                    <Text style={styles.whyLabel}>Why this</Text>
-                    <Text style={styles.whyText}>{item.reason}</Text>
-                  </View>
-
-                  <Pressable
-                    onPress={() => Linking.openURL(link.url)}
-                    style={({ pressed }) => [styles.linkButton, pressed && styles.pressed]}>
-                    <Text style={styles.linkButtonText}>{link.label}</Text>
-                  </Pressable>
-
-                  <Text style={styles.askLabel}>Keep this one?</Text>
-                  <View style={styles.actions}>
-                    <Pressable
-                      onPress={() => recordFeedback(item.id, true)}
-                      style={({ pressed }) => [styles.action, styles.yes, pressed && styles.pressed]}>
-                      <Text style={styles.actionText}>Save it</Text>
-                    </Pressable>
-                    <Pressable
-                      onPress={() => recordFeedback(item.id, false)}
-                      style={({ pressed }) => [styles.action, styles.no, pressed && styles.pressed]}>
-                      <Text style={[styles.actionText, styles.noText]}>Not this</Text>
-                    </Pressable>
-                  </View>
-                </View>
-              );
-            })}
+            {items.map((item) => (
+              <MediaCard
+                key={item.id}
+                item={item}
+                onSave={() => recordFeedback(item.id, true)}
+                onSkip={() => recordFeedback(item.id, false)}
+              />
+            ))}
           </>
-        )}
+        ) : null}
       </View>
     </ScrollView>
+  );
+}
+
+function Option({ option, selected, onPress }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.option,
+        selected && styles.optionSelected,
+        pressed && styles.pressed,
+      ]}>
+      <Text style={[styles.optionLabel, selected && styles.optionLabelSelected]}>
+        {option.label}
+      </Text>
+      <Text style={[styles.optionWant, selected && styles.optionWantSelected]}>{option.want}</Text>
+    </Pressable>
+  );
+}
+
+function SimpleList({ title, blurb, entries, renderMeta, onOpen, openLabel }) {
+  return (
+    <View style={styles.group}>
+      <Text style={styles.groupTitle}>{title}</Text>
+      <Text style={styles.groupBlurb}>{blurb}</Text>
+      {entries.map((entry) => (
+        <View key={entry.id} style={styles.entry}>
+          <Text style={styles.entryTitle}>{entry.title}</Text>
+          <Text style={styles.entryBody}>{entry.description}</Text>
+          <Text style={styles.entryMeta}>{renderMeta(entry)}</Text>
+          {onOpen ? (
+            <Pressable
+              onPress={() => onOpen(entry)}
+              style={({ pressed }) => [styles.entryButton, pressed && styles.pressed]}>
+              <Text style={styles.entryButtonText}>{openLabel}</Text>
+            </Pressable>
+          ) : null}
+        </View>
+      ))}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   content: { padding: space.md, paddingBottom: space.xl, alignItems: 'center' },
-  inner: { width: '100%', maxWidth, gap: space.md },
-  title: {
-    fontSize: 28,
-    lineHeight: 36,
-    fontWeight: '600',
-    color: colors.text,
-    marginTop: space.sm,
+  inner: { width: '100%', maxWidth, gap: space.sm },
+  step: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.accent,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginTop: space.lg,
   },
-  subtitle: { fontSize: 16, lineHeight: 24, color: colors.textSoft },
+  title: { fontSize: 25, lineHeight: 33, fontWeight: '600', color: colors.text },
+  empty: { fontSize: 15, lineHeight: 23, color: colors.textSoft, marginTop: space.sm },
 
-  options: { gap: space.sm },
+  options: { gap: space.sm, marginTop: space.xs },
   option: {
     backgroundColor: colors.surface,
     borderRadius: radius,
@@ -193,19 +301,61 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   optionSelected: { borderColor: colors.accent, backgroundColor: colors.accentSoft },
-  optionLabel: { fontSize: 19, fontWeight: '600', color: colors.text },
+  optionLabel: { fontSize: 18, fontWeight: '600', color: colors.text },
   optionLabelSelected: { color: colors.accent },
   optionWant: { fontSize: 15, lineHeight: 22, color: colors.textSoft },
   optionWantSelected: { color: colors.accent },
-  pressed: { opacity: 0.75 },
-  empty: { fontSize: 15, lineHeight: 23, color: colors.textSoft },
+  pressed: { opacity: 0.6 },
+
+  formatRow: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm, marginTop: space.xs },
+  format: {
+    flexGrow: 1,
+    flexBasis: 150,
+    backgroundColor: colors.surface,
+    borderRadius: radius,
+    borderWidth: 2,
+    borderColor: colors.border,
+    paddingVertical: space.md,
+    paddingHorizontal: space.md,
+    minHeight: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  formatSelected: { borderColor: colors.accent, backgroundColor: colors.accent },
+  formatText: { fontSize: 16, fontWeight: '600', color: colors.text, textAlign: 'center' },
+  formatTextSelected: { color: '#FFFFFF' },
+
+  group: { gap: space.sm, marginTop: space.md },
+  groupTitle: { fontSize: 22, fontWeight: '600', color: colors.text },
+  groupBlurb: { fontSize: 15, lineHeight: 22, color: colors.textSoft, marginBottom: space.xs },
+  entry: {
+    backgroundColor: colors.surface,
+    borderRadius: radius,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: space.md,
+    gap: space.xs,
+  },
+  entryTitle: { fontSize: 18, fontWeight: '600', color: colors.text },
+  entryBody: { fontSize: 16, lineHeight: 24, color: colors.text },
+  entryMeta: { fontSize: 14, lineHeight: 21, color: colors.accent, fontStyle: 'italic' },
+  entryButton: {
+    backgroundColor: colors.accentSoft,
+    borderRadius: radius,
+    paddingVertical: space.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 46,
+    marginTop: space.xs,
+  },
+  entryButtonText: { fontSize: 15, fontWeight: '600', color: colors.accent },
 
   stateBar: {
     backgroundColor: colors.accentSoft,
     borderRadius: radius,
     padding: space.md,
     gap: space.sm,
-    marginTop: space.sm,
+    marginTop: space.md,
   },
   stateLabel: {
     fontSize: 12,
@@ -247,31 +397,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   libraryButtonText: { fontSize: 15, fontWeight: '600', color: '#FFFFFF' },
-  noteBlock: {
-    backgroundColor: colors.noteSoft,
-    borderRadius: radius - 4,
-    borderLeftWidth: 5,
-    borderLeftColor: colors.note,
-    padding: space.md,
-    gap: 2,
-  },
-  noteLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.note,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  noteBody: { fontSize: 15, lineHeight: 23, color: colors.text },
-  linkButton: {
-    backgroundColor: colors.accent,
-    borderRadius: radius,
-    paddingVertical: space.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 52,
-  },
-  linkButtonText: { fontSize: 16, fontWeight: '600', color: '#FFFFFF' },
   reset: {
     alignSelf: 'flex-start',
     paddingVertical: space.sm,
@@ -279,54 +404,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   resetText: { fontSize: 15, fontWeight: '600', color: colors.accent },
-
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: space.md,
-    gap: space.sm,
-  },
-  cardType: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.textSoft,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  cardTitle: { fontSize: 21, fontWeight: '600', color: colors.text },
-  cardBody: { fontSize: 16, lineHeight: 24, color: colors.text },
-  why: {
-    backgroundColor: colors.background,
-    borderRadius: radius - 4,
-    padding: space.md,
-    gap: space.xs,
-  },
-  whyLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.accent,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  whyText: { fontSize: 15, lineHeight: 23, color: colors.textSoft },
-
-  askLabel: { fontSize: 14, color: colors.textSoft },
-  actions: { flexDirection: 'row', gap: space.sm },
-  action: {
-    flex: 1,
-    borderRadius: radius,
-    borderWidth: 1,
-    paddingVertical: space.md,
-    minHeight: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  yes: { borderColor: colors.accent, backgroundColor: colors.accentSoft },
-  yesActive: { backgroundColor: colors.accent },
-  no: { borderColor: colors.border, backgroundColor: colors.surface },
-  actionText: { fontSize: 16, fontWeight: '600', color: colors.accent },
-  yesActiveText: { color: '#FFFFFF' },
-  noText: { color: colors.textSoft },
 });

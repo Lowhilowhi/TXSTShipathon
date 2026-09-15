@@ -1,0 +1,91 @@
+{
+  "_comment": "Things to do that are not media. No API, no location lookup, no business names, because anything specific would be wrong outside San Marcos and stale within a year. These are prompts, not listings. `effort` is roughly how much it costs you to start.",
+  "outing": [
+    {
+      "id": "water",
+      "title": "Go sit near water",
+      "description": "The river, a lake, a fountain. Somewhere moving that you do not have to talk to.",
+      "effort": "Low. Shoes and a bus fare."
+    },
+    {
+      "id": "matinee",
+      "title": "See a film on your own, in the afternoon",
+      "description": "Nearly empty theatre, dark room, nobody looking at you, two hours accounted for.",
+      "effort": "Low. Cheapest ticket of the day."
+    },
+    {
+      "id": "bookshop",
+      "title": "Stand in a bookshop or library for an hour",
+      "description": "Indoors, warm, quiet, and nobody expects you to buy anything or explain yourself.",
+      "effort": "Low. Free."
+    },
+    {
+      "id": "walk-green",
+      "title": "Walk somewhere green until you are tired",
+      "description": "A park, a trail, a campus loop. Being physically tired is different from being worn out.",
+      "effort": "Low. Free."
+    },
+    {
+      "id": "dessert-only",
+      "title": "Go out for dessert instead of a meal",
+      "description": "Shorter than dinner, no menu anxiety, and easy to leave after twenty minutes.",
+      "effort": "Medium. Involves other people."
+    },
+    {
+      "id": "market",
+      "title": "Wander a market with no list",
+      "description": "Somewhere busy enough that you disappear into it. Buy something small or nothing.",
+      "effort": "Medium. Crowds."
+    },
+    {
+      "id": "bring-someone",
+      "title": "Ask one person to come with you",
+      "description": "Pick any of the above and send it to one person. Doing a small thing with company counts.",
+      "effort": "Higher. Requires one message."
+    }
+  ],
+  "hands": [
+    {
+      "id": "colouring",
+      "title": "Colour something in",
+      "description": "Print a page or use an app. Repetitive, no decisions, and your hands stay busy.",
+      "search": "free printable colouring pages adults"
+    },
+    {
+      "id": "cozy-game",
+      "title": "A game where nothing can go wrong",
+      "description": "Stardew Valley, Animal Crossing, Unpacking. No fail state, no timer, no enemies.",
+      "search": "cozy games no fail state"
+    },
+    {
+      "id": "bob-ross",
+      "title": "Paint along with Bob Ross",
+      "description": "Free on YouTube, endlessly calm, and it does not matter at all if yours looks wrong.",
+      "search": "Bob Ross Joy of Painting full episode"
+    },
+    {
+      "id": "yoga-adriene",
+      "title": "Twenty minutes of Yoga With Adriene",
+      "description": "Free, gentle, no equipment, and she is explicitly kind about bad days.",
+      "search": "Yoga With Adriene gentle practice"
+    },
+    {
+      "id": "breathing",
+      "title": "Box breathing for four minutes",
+      "description": "In for four, hold four, out for four, hold four. The shortest thing on this list.",
+      "search": "box breathing 4 minute guided"
+    },
+    {
+      "id": "bake",
+      "title": "Make something that takes an hour",
+      "description": "Bread, soup, cookies. Following steps someone else wrote is easier than deciding.",
+      "search": "easy one bowl recipe beginner"
+    },
+    {
+      "id": "reorganise",
+      "title": "Reorganise one small drawer",
+      "description": "One drawer. Not the room. A visible finished thing in under thirty minutes.",
+      "search": "small decluttering one drawer method"
+    }
+  ]
+}

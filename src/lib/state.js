@@ -17,6 +17,10 @@ export function AppStateProvider({ children }) {
   const [recentAcuity, setRecentAcuity] = useState([]);
   // One of 'numb' | 'spiraling' | 'angry' | 'hollow', or null before check in.
   const [mood, setMood] = useState(null);
+  // What they want to do: 'in' | 'out' | 'hands' | 'people', or null.
+  const [intent, setIntent] = useState(null);
+  // If staying in: 'watch' | 'listen' | 'read', or null.
+  const [format, setFormat] = useState(null);
   // [{ mediaId, liked }] where liked is true for yes and false for no.
   const [feedback, setFeedback] = useState([]);
 
@@ -27,6 +31,17 @@ export function AppStateProvider({ children }) {
 
   const recordMood = useCallback((nextMood) => {
     setMood(nextMood);
+  }, []);
+
+  // Changing what you want to do drops the format, so the next question is
+  // always asked fresh rather than silently keeping a stale answer.
+  const recordIntent = useCallback((nextIntent) => {
+    setIntent(nextIntent);
+    setFormat(null);
+  }, []);
+
+  const recordFormat = useCallback((nextFormat) => {
+    setFormat(nextFormat);
   }, []);
 
   // Yes or no on a single recommendation card. One entry per media id, latest wins.
@@ -45,9 +60,13 @@ export function AppStateProvider({ children }) {
     () => ({
       recentAcuity,
       mood,
+      intent,
+      format,
       feedback,
       recordAcuity,
       recordMood,
+      recordIntent,
+      recordFormat,
       recordFeedback,
       removeFeedback,
       clearFeedback,
@@ -55,9 +74,13 @@ export function AppStateProvider({ children }) {
     [
       recentAcuity,
       mood,
+      intent,
+      format,
       feedback,
       recordAcuity,
       recordMood,
+      recordIntent,
+      recordFormat,
       recordFeedback,
       removeFeedback,
       clearFeedback,
