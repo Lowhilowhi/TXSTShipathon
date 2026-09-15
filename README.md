@@ -106,7 +106,7 @@ Women are still under enrolled in the trials that decide how we get treated. Wom
 
 ## Running it
 
-You need [Node.js](https://nodejs.org) 20 or newer. Nothing else: no accounts, no API keys, no services to sign up for.
+**What you need:** [Node.js](https://nodejs.org) 20 or newer, and the **Expo Go** app on your phone ([iOS](https://apps.apple.com/app/expo-go/id982107779), [Android](https://play.google.com/store/apps/details?id=host.exp.exponent)). Nothing else: no accounts, no API keys, no services to sign up for.
 
 ```
 git clone https://github.com/Lowhilowhi/TXSTShipathon.git
@@ -115,13 +115,15 @@ npm install
 npx expo start
 ```
 
-`npm install` takes a couple of minutes the first time. When `npx expo start` finishes booting it prints a QR code and a menu of keys.
+`npm install` takes a couple of minutes the first time. When the server finishes booting it prints a QR code in the terminal.
 
-**Fastest way to see it: press `w`.** That opens the app in your browser at `http://localhost:8081`. No phone, no app install. It is a React Native app but it runs on the web too, and everything described in this README works there.
+**Scan that QR** with the iPhone Camera app, or with Expo Go's built in scanner on Android. It opens on your phone as a real native app: React Native components rendered by the operating system, not a website inside a wrapper.
 
-**On a phone instead:** install **Expo Go** ([iOS](https://apps.apple.com/app/expo-go/id982107779), [Android](https://play.google.com/store/apps/details?id=host.exp.exponent)), then scan the printed QR with the iPhone Camera app, or with Expo Go's built in scanner on Android. The phone has to be on the same Wi-Fi as the computer running the server. If it is not, run `npx expo start --tunnel` instead, which lifts that restriction.
+Your phone needs to be on the same Wi-Fi as the computer running the server. If it is not, run `npx expo start --tunnel` instead, which lifts that restriction.
 
 Leave the terminal window open while you use it. Closing it stops the server.
+
+If you cannot install Expo Go, pressing `w` in that same terminal opens the identical code in a browser at `http://localhost:8081`. That is a development convenience rather than the target platform, but the walkthrough below works there too.
 
 State is in memory, so a refresh clears everything. That is the design, not a bug, and it is worth saying before someone reloads mid demo and thinks it broke.
 
