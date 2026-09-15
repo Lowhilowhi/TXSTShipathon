@@ -30,22 +30,12 @@ export default function HomeScreen() {
         </Pressable>
 
         <Pressable
-          onPress={() => router.push('/mood')}
-          style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
-          <Text style={styles.cardTitle}>How are you right now?</Text>
-          <Text style={styles.cardBody}>
-            One tap. What you pick, together with what you just looked at, decides what the app
-            suggests next.
-          </Text>
-        </Pressable>
-
-        <Pressable
           onPress={() => router.push('/feed')}
           style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
-          <Text style={styles.cardTitle}>What might help right now</Text>
+          <Text style={styles.cardTitle}>Where are you right now?</Text>
           <Text style={styles.cardBody}>
-            Something to watch or listen to, picked for where you actually are. Each one tells you
-            why it was chosen.
+            Tap how you are and get something to watch, picked for where you actually are. Each one
+            tells you why it was chosen.
           </Text>
         </Pressable>
 

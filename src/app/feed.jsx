@@ -1,117 +1,154 @@
-// Recommendation feed. Reads mood and recent acuity out of shared state,
-// hands them to the pure engine in src/lib/recommend.js, and renders the result.
-// This screen holds no matching logic of its own.
+// One screen: pick how you are, see what helps, immediately.
+//
+// The check in and the recommendations used to be two routes. They are merged
+// because the whole point is that one drives the other, and you cannot see that
+// happen if it takes a navigation to find out.
+//
+// This screen holds no matching logic of its own. It reads shared state, hands
+// it to the pure engine in src/lib/recommend.js, and renders the result.
 
-import { useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { recommend } from '@/lib/recommend';
 import { useAppState } from '@/lib/state';
 import { acuityColors, colors, maxWidth, radius, space } from '@/lib/theme';
 
-export default function FeedScreen() {
-  const router = useRouter();
-  const { mood, recentAcuity, feedback, recordFeedback, clearFeedback } = useAppState();
-  const { label, items, hiddenCount } = recommend({ mood, recentAcuity, feedback });
+// The key must match the moods handled in src/lib/recommend.js.
+// Each option names the feeling and what it will get you, so picking one is a
+// choice about your evening rather than a self diagnosis.
+const OPTIONS = [
+  { key: 'spiraling', label: 'I cannot stop thinking', want: 'Give me something loud enough to drown it out' },
+  { key: 'hollow', label: 'I feel empty', want: 'Give me people being good to each other' },
+  { key: 'angry', label: 'I am furious', want: 'Give me a woman who wins' },
+  { key: 'numb', label: 'I feel nothing', want: 'Give me something easy that asks nothing' },
+];
 
-  if (!mood) {
-    return (
-      <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-        <View style={styles.inner}>
-          <Text style={styles.title}>Check in first</Text>
-          <Text style={styles.subtitle}>
-            Every suggestion here has to be able to explain itself, and it cannot do that without
-            knowing how you are doing.
-          </Text>
-          <Pressable
-            onPress={() => router.push('/mood')}
-            style={({ pressed }) => [styles.primary, pressed && styles.pressed]}>
-            <Text style={styles.primaryText}>How are you right now?</Text>
-          </Pressable>
-        </View>
-      </ScrollView>
-    );
-  }
+export default function RightNowScreen() {
+  const { mood, recentAcuity, feedback, recordMood, recordFeedback, clearFeedback } = useAppState();
+  const { label, items, hiddenCount } = recommend({ mood, recentAcuity, feedback });
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <View style={styles.inner}>
-        <View style={styles.stateBar}>
-          <Text style={styles.stateLabel}>Picked using</Text>
-          <View style={styles.chips}>
-            <View style={[styles.chip, styles.chipMood]}>
-              <Text style={styles.chipMoodText}>mood: {mood}</Text>
-            </View>
-            <View style={[styles.chip, { borderColor: acuityColors[label] ?? colors.border }]}>
-              <Text style={[styles.chipText, { color: acuityColors[label] ?? colors.textSoft }]}>
-                acuity: {label}
-              </Text>
-            </View>
-          </View>
-          <Text style={styles.stateNote}>
-            {recentAcuity.length === 0
-              ? 'No resources opened yet.'
-              : `From the ${recentAcuity.length} resource${
-                  recentAcuity.length === 1 ? '' : 's'
-                } you opened: ${recentAcuity.join(', ')}.`}
-          </Text>
+        <Text style={styles.title}>Where are you right now?</Text>
+        <Text style={styles.subtitle}>
+          Tap one. The list underneath changes as soon as you do, and you can change your mind as
+          often as you want.
+        </Text>
+
+        <View style={styles.options}>
+          {OPTIONS.map((option) => {
+            const selected = mood === option.key;
+            return (
+              <Pressable
+                key={option.key}
+                onPress={() => recordMood(option.key)}
+                style={({ pressed }) => [
+                  styles.option,
+                  selected && styles.optionSelected,
+                  pressed && styles.pressed,
+                ]}>
+                <Text style={[styles.optionLabel, selected && styles.optionLabelSelected]}>
+                  {option.label}
+                </Text>
+                <Text style={[styles.optionWant, selected && styles.optionWantSelected]}>
+                  {option.want}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
 
-        {feedback.length > 0 ? (
-          <View style={styles.changed}>
-            <Text style={styles.changedText}>
-              This list just changed.{' '}
-              {hiddenCount > 0
-                ? `${hiddenCount} ${hiddenCount === 1 ? 'title is' : 'titles are'} gone because you said no`
-                : 'Nothing was removed'}
-              {feedback.some((f) => f.liked)
-                ? ', and anything sharing tags with your yes moved up.'
-                : ', and the rest reordered.'}
-            </Text>
-            <Pressable
-              onPress={clearFeedback}
-              style={({ pressed }) => [styles.reset, pressed && styles.pressed]}>
-              <Text style={styles.resetText}>Start the list over</Text>
-            </Pressable>
-          </View>
-        ) : null}
-
-        {items.map((item) => {
-          const saidYes = feedback.some((f) => f.mediaId === item.id && f.liked);
-          return (
-            <View key={item.id} style={styles.card}>
-              <Text style={styles.cardType}>{item.type}</Text>
-              <Text style={styles.cardTitle}>{item.title}</Text>
-              <Text style={styles.cardBody}>{item.description}</Text>
-
-              <View style={styles.why}>
-                <Text style={styles.whyLabel}>Why this</Text>
-                <Text style={styles.whyText}>{item.reason}</Text>
-              </View>
-
-              <Text style={styles.askLabel}>Would this help?</Text>
-              <View style={styles.actions}>
-                <Pressable
-                  onPress={() => recordFeedback(item.id, true)}
-                  style={({ pressed }) => [
-                    styles.action,
-                    styles.yes,
-                    saidYes && styles.yesActive,
-                    pressed && styles.pressed,
-                  ]}>
-                  <Text style={[styles.actionText, saidYes && styles.yesActiveText]}>
-                    {saidYes ? 'Yes, more like this' : 'Yes'}
+        {!mood ? (
+          <Text style={styles.empty}>
+            Nothing is suggested until you pick one, because every card here has to be able to say
+            why it was chosen.
+          </Text>
+        ) : (
+          <>
+            <View style={styles.stateBar}>
+              <Text style={styles.stateLabel}>Picked using</Text>
+              <View style={styles.chips}>
+                <View style={[styles.chip, styles.chipMood]}>
+                  <Text style={styles.chipMoodText}>mood: {mood}</Text>
+                </View>
+                <View style={[styles.chip, { borderColor: acuityColors[label] ?? colors.border }]}>
+                  <Text
+                    style={[styles.chipText, { color: acuityColors[label] ?? colors.textSoft }]}>
+                    acuity: {label}
                   </Text>
-                </Pressable>
+                </View>
+              </View>
+              <Text style={styles.stateNote}>
+                {recentAcuity.length === 0
+                  ? 'No resources opened yet, so nothing is filtered for intensity.'
+                  : `From the ${recentAcuity.length} resource${
+                      recentAcuity.length === 1 ? '' : 's'
+                    } you opened: ${recentAcuity.join(', ')}.`}
+              </Text>
+            </View>
+
+            {feedback.length > 0 ? (
+              <View style={styles.changed}>
+                <Text style={styles.changedText}>
+                  This list just changed.{' '}
+                  {hiddenCount > 0
+                    ? `${hiddenCount} ${hiddenCount === 1 ? 'title is' : 'titles are'} gone because you said no`
+                    : 'Nothing was removed'}
+                  {feedback.some((f) => f.liked)
+                    ? ', and anything sharing tags with your yes moved up.'
+                    : ', and the rest reordered.'}
+                </Text>
                 <Pressable
-                  onPress={() => recordFeedback(item.id, false)}
-                  style={({ pressed }) => [styles.action, styles.no, pressed && styles.pressed]}>
-                  <Text style={[styles.actionText, styles.noText]}>No</Text>
+                  onPress={clearFeedback}
+                  style={({ pressed }) => [styles.reset, pressed && styles.pressed]}>
+                  <Text style={styles.resetText}>Start the list over</Text>
                 </Pressable>
               </View>
-            </View>
-          );
-        })}
+            ) : null}
+
+            {items.map((item) => {
+              const saidYes = feedback.some((f) => f.mediaId === item.id && f.liked);
+              return (
+                <View key={item.id} style={styles.card}>
+                  <Text style={styles.cardType}>{item.type}</Text>
+                  <Text style={styles.cardTitle}>{item.title}</Text>
+                  <Text style={styles.cardBody}>{item.description}</Text>
+
+                  <View style={styles.why}>
+                    <Text style={styles.whyLabel}>Why this</Text>
+                    <Text style={styles.whyText}>{item.reason}</Text>
+                  </View>
+
+                  <Text style={styles.askLabel}>Would this help?</Text>
+                  <View style={styles.actions}>
+                    <Pressable
+                      onPress={() => recordFeedback(item.id, true)}
+                      style={({ pressed }) => [
+                        styles.action,
+                        styles.yes,
+                        saidYes && styles.yesActive,
+                        pressed && styles.pressed,
+                      ]}>
+                      <Text style={[styles.actionText, saidYes && styles.yesActiveText]}>
+                        {saidYes ? 'Yes, more like this' : 'Yes'}
+                      </Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => recordFeedback(item.id, false)}
+                      style={({ pressed }) => [
+                        styles.action,
+                        styles.no,
+                        pressed && styles.pressed,
+                      ]}>
+                      <Text style={[styles.actionText, styles.noText]}>No</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              );
+            })}
+          </>
+        )}
       </View>
     </ScrollView>
   );
@@ -121,18 +158,34 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   content: { padding: space.md, paddingBottom: space.xl, alignItems: 'center' },
   inner: { width: '100%', maxWidth, gap: space.md },
-  title: { fontSize: 28, lineHeight: 36, fontWeight: '600', color: colors.text, marginTop: space.sm },
-  subtitle: { fontSize: 16, lineHeight: 24, color: colors.textSoft },
-  primary: {
-    backgroundColor: colors.accent,
-    borderRadius: radius,
-    paddingVertical: space.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 56,
+  title: {
+    fontSize: 28,
+    lineHeight: 36,
+    fontWeight: '600',
+    color: colors.text,
+    marginTop: space.sm,
   },
-  primaryText: { fontSize: 18, fontWeight: '600', color: '#FFFFFF' },
+  subtitle: { fontSize: 16, lineHeight: 24, color: colors.textSoft },
+
+  options: { gap: space.sm },
+  option: {
+    backgroundColor: colors.surface,
+    borderRadius: radius,
+    borderWidth: 2,
+    borderColor: colors.border,
+    paddingVertical: space.md,
+    paddingHorizontal: space.md,
+    gap: 2,
+    minHeight: 72,
+    justifyContent: 'center',
+  },
+  optionSelected: { borderColor: colors.accent, backgroundColor: colors.accentSoft },
+  optionLabel: { fontSize: 19, fontWeight: '600', color: colors.text },
+  optionLabelSelected: { color: colors.accent },
+  optionWant: { fontSize: 15, lineHeight: 22, color: colors.textSoft },
+  optionWantSelected: { color: colors.accent },
   pressed: { opacity: 0.75 },
+  empty: { fontSize: 15, lineHeight: 23, color: colors.textSoft },
 
   stateBar: {
     backgroundColor: colors.accentSoft,
@@ -161,6 +214,23 @@ const styles = StyleSheet.create({
   chipMoodText: { fontSize: 14, fontWeight: '600', color: colors.accent },
   chipText: { fontSize: 14, fontWeight: '600' },
   stateNote: { fontSize: 14, lineHeight: 21, color: colors.textSoft },
+
+  changed: {
+    backgroundColor: colors.surface,
+    borderRadius: radius,
+    borderWidth: 2,
+    borderColor: colors.accent,
+    padding: space.md,
+    gap: space.sm,
+  },
+  changedText: { fontSize: 15, lineHeight: 23, color: colors.text },
+  reset: {
+    alignSelf: 'flex-start',
+    paddingVertical: space.sm,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  resetText: { fontSize: 15, fontWeight: '600', color: colors.accent },
 
   card: {
     backgroundColor: colors.surface,
@@ -193,18 +263,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   whyText: { fontSize: 15, lineHeight: 23, color: colors.textSoft },
-
-  changed: {
-    backgroundColor: colors.surface,
-    borderRadius: radius,
-    borderWidth: 2,
-    borderColor: colors.accent,
-    padding: space.md,
-    gap: space.sm,
-  },
-  changedText: { fontSize: 15, lineHeight: 23, color: colors.text },
-  reset: { alignSelf: 'flex-start', paddingVertical: space.sm, minHeight: 44, justifyContent: 'center' },
-  resetText: { fontSize: 15, fontWeight: '600', color: colors.accent },
 
   askLabel: { fontSize: 14, color: colors.textSoft },
   actions: { flexDirection: 'row', gap: space.sm },

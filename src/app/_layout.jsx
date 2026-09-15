@@ -19,8 +19,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" options={{ title: 'Steady' }} />
         <Stack.Screen name="resources" options={{ title: 'Find help' }} />
         <Stack.Screen name="resource/[id]" options={{ title: 'Resource' }} />
-        <Stack.Screen name="mood" options={{ title: 'Check in' }} />
-        <Stack.Screen name="feed" options={{ title: 'What might help' }} />
+        <Stack.Screen name="feed" options={{ title: 'Right now' }} />
       </Stack>
     </AppStateProvider>
   );
