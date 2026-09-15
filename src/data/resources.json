@@ -1,0 +1,180 @@
+{
+  "_comment": "PLACEHOLDER CONTACT DATA. Every phone and link below is a marked placeholder. Real Texas State University and Hays County contact details will replace them. Do not ship or demo these numbers as if they were real. Only the id, tier, acuity, name, whatItDoes and doesNotRequire fields are intended to be accurate.",
+  "_acuityKey": {
+    "high": "Immediate safety, protective orders, emergency response.",
+    "medium": "Formal reporting, Title IX, Dean of Students, victim services.",
+    "low": "Counseling, support groups, peer support."
+  },
+  "resources": [
+    {
+      "id": "campus-police",
+      "tier": "campus",
+      "acuity": "high",
+      "name": "University Police Department",
+      "whatItDoes": "Responds to emergencies on campus and can get someone to you now. Can take a criminal report if and when you want one.",
+      "doesNotRequire": "You do not have to decide about pressing charges to call them.",
+      "link": "https://example.edu/PLACEHOLDER-university-police",
+      "phone": "PLACEHOLDER 000-000-0001"
+    },
+    {
+      "id": "campus-emergency-housing",
+      "tier": "campus",
+      "acuity": "high",
+      "name": "Emergency Housing Relocation",
+      "whatItDoes": "Moves you to different housing quickly if you are not safe where you are currently living.",
+      "doesNotRequire": "You do not have to file a police report or a formal complaint first.",
+      "link": "https://example.edu/PLACEHOLDER-emergency-housing",
+      "phone": "PLACEHOLDER 000-000-0002"
+    },
+    {
+      "id": "campus-title-ix",
+      "tier": "campus",
+      "acuity": "medium",
+      "name": "Title IX Office",
+      "whatItDoes": "Handles formal reports of sexual harassment and assault involving students or staff. Can issue no contact orders and arrange class and schedule changes.",
+      "doesNotRequire": "You do not have to involve the police to start a Title IX process.",
+      "link": "https://example.edu/PLACEHOLDER-title-ix",
+      "phone": "PLACEHOLDER 000-000-0003"
+    },
+    {
+      "id": "campus-dean-of-students",
+      "tier": "campus",
+      "acuity": "medium",
+      "name": "Dean of Students Office",
+      "whatItDoes": "Arranges academic accommodations, absence notifications to professors, and withdrawal or incomplete options after a crisis.",
+      "doesNotRequire": "You do not have to explain the details of what happened to get accommodations.",
+      "link": "https://example.edu/PLACEHOLDER-dean-of-students",
+      "phone": "PLACEHOLDER 000-000-0004"
+    },
+    {
+      "id": "campus-advocate",
+      "tier": "campus",
+      "acuity": "medium",
+      "name": "Confidential Student Advocate",
+      "whatItDoes": "Walks through your options with you and can sit with you through reporting, medical, or legal appointments.",
+      "doesNotRequire": "Confidential. Talking to an advocate does not start any report.",
+      "link": "https://example.edu/PLACEHOLDER-student-advocate",
+      "phone": "PLACEHOLDER 000-000-0005"
+    },
+    {
+      "id": "campus-counseling",
+      "tier": "campus",
+      "acuity": "low",
+      "name": "Student Counseling Center",
+      "whatItDoes": "Free short term counseling for enrolled students, including trauma focused sessions and referrals for longer care.",
+      "doesNotRequire": "You do not need a diagnosis, a referral, or insurance.",
+      "link": "https://example.edu/PLACEHOLDER-counseling-center",
+      "phone": "PLACEHOLDER 000-000-0006"
+    },
+    {
+      "id": "campus-support-group",
+      "tier": "campus",
+      "acuity": "low",
+      "name": "Campus Survivor Support Group",
+      "whatItDoes": "Weekly peer group for students who have experienced assault or abuse. You can attend and say nothing.",
+      "doesNotRequire": "No intake, no paperwork, no commitment to keep attending.",
+      "link": "https://example.edu/PLACEHOLDER-support-group",
+      "phone": "PLACEHOLDER 000-000-0007"
+    },
+    {
+      "id": "county-emergency",
+      "tier": "county",
+      "acuity": "high",
+      "name": "County Sheriff Emergency Response",
+      "whatItDoes": "Emergency law enforcement response anywhere in the county, including off campus housing.",
+      "doesNotRequire": "You do not have to be a county resident to call.",
+      "link": "https://example.gov/PLACEHOLDER-sheriff",
+      "phone": "PLACEHOLDER 000-000-0008"
+    },
+    {
+      "id": "county-protective-order",
+      "tier": "county",
+      "acuity": "high",
+      "name": "Protective Order Assistance",
+      "whatItDoes": "Helps you file for a protective order against a specific person, including the emergency version that can be granted the same day.",
+      "doesNotRequire": "Free to file. You do not need a private lawyer and you do not need a criminal case to already exist.",
+      "link": "https://example.gov/PLACEHOLDER-protective-order",
+      "phone": "PLACEHOLDER 000-000-0009"
+    },
+    {
+      "id": "county-shelter",
+      "tier": "county",
+      "acuity": "high",
+      "name": "County Emergency Shelter",
+      "whatItDoes": "Confidential emergency shelter beds for people fleeing violence, with transport available in most cases.",
+      "doesNotRequire": "No cost. You do not have to report to police to get a bed.",
+      "link": "https://example.org/PLACEHOLDER-shelter",
+      "phone": "PLACEHOLDER 000-000-0010"
+    },
+    {
+      "id": "county-victim-services",
+      "tier": "county",
+      "acuity": "medium",
+      "name": "District Attorney Victim Services",
+      "whatItDoes": "Explains what happens if a case is filed, keeps you updated on case status, and helps apply for crime victim compensation.",
+      "doesNotRequire": "You can ask questions here without committing to participate in a prosecution.",
+      "link": "https://example.gov/PLACEHOLDER-victim-services",
+      "phone": "PLACEHOLDER 000-000-0011"
+    },
+    {
+      "id": "county-legal-aid",
+      "tier": "county",
+      "acuity": "medium",
+      "name": "Free Legal Aid Clinic",
+      "whatItDoes": "Free civil legal help on housing, custody, immigration status, and lease breaks connected to abuse.",
+      "doesNotRequire": "No fee. Not connected to law enforcement.",
+      "link": "https://example.org/PLACEHOLDER-legal-aid",
+      "phone": "PLACEHOLDER 000-000-0012"
+    },
+    {
+      "id": "county-crisis-center",
+      "tier": "county",
+      "acuity": "low",
+      "name": "County Crisis and Advocacy Center",
+      "whatItDoes": "Free ongoing counseling and survivor support groups for people in the county, not limited to students.",
+      "doesNotRequire": "No insurance, no student enrollment, no police involvement.",
+      "link": "https://example.org/PLACEHOLDER-crisis-center",
+      "phone": "PLACEHOLDER 000-000-0013"
+    },
+    {
+      "id": "national-dv-hotline",
+      "tier": "national",
+      "acuity": "high",
+      "name": "National Domestic Violence Hotline",
+      "whatItDoes": "24 hour support for anyone in an abusive relationship, including safety planning for leaving.",
+      "doesNotRequire": "Anonymous. You do not have to give your name or location.",
+      "link": "https://example.org/PLACEHOLDER-national-dv-hotline",
+      "phone": "PLACEHOLDER 000-000-0014"
+    },
+    {
+      "id": "national-assault-hotline",
+      "tier": "national",
+      "acuity": "high",
+      "name": "National Sexual Assault Hotline",
+      "whatItDoes": "24 hour support line and online chat, staffed by trained advocates, that can also connect you to your nearest local provider.",
+      "doesNotRequire": "Anonymous and free. No report is created by calling.",
+      "link": "https://example.org/PLACEHOLDER-national-assault-hotline",
+      "phone": "PLACEHOLDER 000-000-0015"
+    },
+    {
+      "id": "national-victim-connect",
+      "tier": "national",
+      "acuity": "medium",
+      "name": "Victim Reporting Options Helpline",
+      "whatItDoes": "Talks through what reporting actually involves in your state and what each path would mean for you, before you choose one.",
+      "doesNotRequire": "Informational only. Nothing you say starts a case.",
+      "link": "https://example.org/PLACEHOLDER-victim-connect",
+      "phone": "PLACEHOLDER 000-000-0016"
+    },
+    {
+      "id": "national-online-peer-support",
+      "tier": "national",
+      "acuity": "low",
+      "name": "Moderated Online Peer Community",
+      "whatItDoes": "Moderated forums and text based peer support for survivors, available at any hour when in person groups are not.",
+      "doesNotRequire": "No real name, no cost, no scheduled appointment.",
+      "link": "https://example.org/PLACEHOLDER-peer-community",
+      "phone": "PLACEHOLDER 000-000-0017"
+    }
+  ]
+}
