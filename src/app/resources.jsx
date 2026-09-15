@@ -4,7 +4,7 @@
 import { useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import resourceData from '@/data/resources.json';
+import resources from '@/data/resources.json';
 import { acuityColors, acuityLabels, colors, maxWidth, radius, space } from '@/lib/theme';
 
 // Order matters. Closest to the user first.
@@ -37,7 +37,7 @@ export default function ResourcesScreen() {
         </Text>
 
         {TIERS.map((tier) => {
-          const entries = resourceData.resources.filter((r) => r.tier === tier.key);
+          const entries = resources.filter((r) => r.tier === tier.key);
           return (
             <View key={tier.key} style={styles.group}>
               <Text style={styles.groupLabel}>{tier.label}</Text>

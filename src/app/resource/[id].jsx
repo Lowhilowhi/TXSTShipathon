@@ -1,18 +1,33 @@
 // Resource detail. Opening this screen records the resource's acuity into
 // shared state, which is what later steers the recommendation engine.
+//
+// Every contact field except `link` is optional in src/data/resources.json,
+// so each row renders only when that resource actually has it.
 
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import resourceData from '@/data/resources.json';
+import resources from '@/data/resources.json';
 import { useAppState } from '@/lib/state';
 import { acuityColors, acuityLabels, colors, maxWidth, radius, space } from '@/lib/theme';
+
+function ContactRow({ label, value }) {
+  if (!value) return null;
+  return (
+    <View style={styles.contactRow}>
+      <Text style={styles.contactLabel}>{label}</Text>
+      <Text style={styles.contactValue} selectable>
+        {value}
+      </Text>
+    </View>
+  );
+}
 
 export default function ResourceDetailScreen() {
   const { id } = useLocalSearchParams();
   const { recordAcuity } = useAppState();
-  const resource = resourceData.resources.find((r) => r.id === id);
+  const resource = resources.find((r) => r.id === id);
 
   // Record once per mount. The ref stops React's double invoked dev effect
   // from logging the same view twice.
@@ -53,20 +68,35 @@ export default function ResourceDetailScreen() {
           <Text style={styles.blockBody}>{resource.doesNotRequire}</Text>
         </View>
 
+        {resource.note ? (
+          <View style={styles.noteBlock}>
+            <Text style={styles.noteLabel}>Worth knowing first</Text>
+            <Text style={styles.noteBody}>{resource.note}</Text>
+          </View>
+        ) : null}
+
         <View style={styles.block}>
           <Text style={styles.blockLabel}>Contact</Text>
-          <Text style={styles.contact} selectable>
-            {resource.phone}
-          </Text>
+
+          {resource.emergency ? (
+            <View style={styles.emergency}>
+              <Text style={styles.emergencyLabel}>In an emergency</Text>
+              <Text style={styles.emergencyValue} selectable>
+                {resource.emergency}
+              </Text>
+            </View>
+          ) : null}
+
+          <ContactRow label="Phone" value={resource.phone} />
+          <ContactRow label="Also" value={resource.altPhone} />
+          <ContactRow label="Email" value={resource.email} />
+          <ContactRow label="Where" value={resource.location} />
+
           <Pressable
             onPress={() => Linking.openURL(resource.link)}
             style={({ pressed }) => [styles.linkButton, pressed && styles.pressed]}>
             <Text style={styles.linkButtonText}>Open website</Text>
           </Pressable>
-          <Text style={styles.placeholderNote}>
-            Placeholder contact details. Real numbers and links go into
-            src/data/resources.json.
-          </Text>
         </View>
 
         <Text style={styles.recorded}>
@@ -109,7 +139,39 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   blockBody: { fontSize: 17, lineHeight: 26, color: colors.text },
-  contact: { fontSize: 17, color: colors.text },
+
+  noteBlock: {
+    backgroundColor: colors.noteSoft,
+    borderRadius: radius,
+    borderLeftWidth: 5,
+    borderLeftColor: colors.note,
+    padding: space.md,
+    gap: space.xs,
+  },
+  noteLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.note,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  noteBody: { fontSize: 16, lineHeight: 25, color: colors.text },
+
+  emergency: {
+    backgroundColor: colors.background,
+    borderRadius: radius - 4,
+    borderLeftWidth: 5,
+    borderLeftColor: acuityColors.high,
+    padding: space.md,
+    gap: 2,
+  },
+  emergencyLabel: { fontSize: 13, fontWeight: '700', color: acuityColors.high },
+  emergencyValue: { fontSize: 24, fontWeight: '700', color: colors.text },
+
+  contactRow: { gap: 2 },
+  contactLabel: { fontSize: 13, color: colors.textSoft },
+  contactValue: { fontSize: 17, lineHeight: 25, color: colors.text },
+
   linkButton: {
     backgroundColor: colors.accentSoft,
     borderRadius: radius,
@@ -117,9 +179,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: 52,
     justifyContent: 'center',
+    marginTop: space.xs,
   },
   linkButtonText: { fontSize: 16, fontWeight: '600', color: colors.accent },
   pressed: { opacity: 0.75 },
-  placeholderNote: { fontSize: 13, lineHeight: 20, color: colors.textSoft },
   recorded: { fontSize: 14, lineHeight: 21, color: colors.textSoft, marginTop: space.xs },
 });

@@ -8,6 +8,9 @@ export const colors = {
   border: '#E4DED5',
   accent: '#3F6B5F',
   accentSoft: '#E7EFEB',
+  // For the "worth knowing before you use this" note on a resource.
+  note: '#8A6A2F',
+  noteSoft: '#FBF5E8',
 };
 
 // One colour per acuity level, used on directory rows and in the why sentence.
