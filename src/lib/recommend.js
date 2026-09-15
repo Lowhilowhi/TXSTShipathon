@@ -1,0 +1,218 @@
+// Pure recommendation logic. No React, no react-native, no UI imports.
+// Everything here is a plain function of its arguments, so it can be read,
+// reasoned about, and tested on its own.
+//
+// This is the file where the two hackathon categories actually meet.
+// `mood` comes from the Health side check in. `recentAcuity` comes from
+// which support resources the user opened. Both are required inputs.
+
+import mediaData from '@/data/media.json';
+
+// What each mood is reaching for, and the wording used in the why sentence.
+export const MOOD_TARGETS = {
+  spiraling: {
+    tags: ['ensemble', 'comedy'],
+    phrase: 'an ensemble comedy, busy enough to interrupt a thought loop',
+  },
+  hollow: {
+    tags: ['warmth', 'connection'],
+    phrase: 'about warmth and people choosing each other',
+  },
+  angry: {
+    tags: ['women-winning', 'justice'],
+    phrase: 'a story where a woman is underestimated and wins anyway',
+  },
+  numb: {
+    tags: ['gentle', 'low-stakes'],
+    phrase: 'gentle and low stakes, nothing that demands a reaction',
+  },
+};
+
+// Plain English for each tag, used in the why sentence.
+export const TAG_LABELS = {
+  ensemble: 'with a big cast',
+  comedy: 'funny',
+  warmth: 'warm',
+  connection: 'about people choosing each other',
+  'women-winning': 'about a woman winning',
+  justice: 'about something unfair being put right',
+  gentle: 'gentle',
+  'low-stakes': 'low stakes',
+};
+
+// How much each acuity level counts toward "this person is in a rough spot".
+const ACUITY_WEIGHT = { high: 1, medium: 0.5, low: 0 };
+
+// Points per matching mood tag.
+const TAG_POINTS = 3;
+
+// Points per tag shared with something the user said yes or no to.
+const FEEDBACK_POINTS = 2;
+
+/**
+ * Turns the list of recently viewed acuity values into a single 0..1 number.
+ * The most recently viewed resource counts double, because it is the best
+ * signal of where the person is right now.
+ */
+export function acuityPressure(recentAcuity) {
+  if (!recentAcuity || recentAcuity.length === 0) return 0;
+
+  let total = 0;
+  let weight = 0;
+  recentAcuity.forEach((acuity, index) => {
+    const w = index === 0 ? 2 : 1;
+    total += (ACUITY_WEIGHT[acuity] ?? 0) * w;
+    weight += w;
+  });
+
+  return weight === 0 ? 0 : total / weight;
+}
+
+/**
+ * A readable bucket for the 0..1 pressure number.
+ *
+ * `hasViews` is separate from the number on purpose. Low acuity resources are
+ * weighted 0, so someone who only opened counseling has a pressure of 0 but has
+ * still opened something. Without this flag the card would tell them they had
+ * not opened anything, which is both wrong and the kind of thing that makes an
+ * app feel like it is not listening.
+ */
+export function pressureLabel(pressure, hasViews = true) {
+  if (!hasViews) return 'none';
+  if (pressure >= 0.6) return 'high';
+  if (pressure >= 0.3) return 'medium';
+  return 'low';
+}
+
+// The acuity half of the why sentence.
+const ACUITY_PHRASES = {
+  high: 'You have been looking at immediate safety resources, so anything heavy is filtered out and this is one of the gentlest things here.',
+  medium:
+    'You have been looking at reporting level resources, so this is kept on the steadier side.',
+  low: 'The resources you opened were support level, so this does not have to be especially soft.',
+  none: 'You have not opened any resources yet, so nothing is being filtered for intensity.',
+};
+
+/**
+ * Score one media item. Higher is a better fit.
+ *
+ * Two terms, both legible:
+ *   1. Mood fit   - one point block per tag the mood is reaching for.
+ *   2. Acuity fit - the more high acuity resources viewed, the more a gentle,
+ *                   low intensity item is rewarded over an intense one.
+ */
+export function scoreItem(item, moodTags, pressure) {
+  const matchedTags = item.tags.filter((tag) => moodTags.includes(tag));
+  const moodScore = matchedTags.length * TAG_POINTS;
+
+  // intensity 1 gains the most, intensity 3 gains nothing, and the whole
+  // effect scales with how much acuity pressure there is.
+  const acuityScore = (3 - item.intensity) * pressure * 3;
+
+  return { score: moodScore + acuityScore, matchedTags, moodScore, acuityScore };
+}
+
+/** The plain sentence shown on the card, naming both the mood and the acuity. */
+export function buildReason(mood, label) {
+  const target = MOOD_TARGETS[mood];
+  return `You checked in as ${mood}, so this is ${target.phrase}. ${ACUITY_PHRASES[label]}`;
+}
+
+/**
+ * Collects the tags of everything the user said yes or no to, so that a yes
+ * on one title pulls up other titles that share its tags.
+ *
+ * `protectedTags` are the tags the current mood is reaching for. A no never
+ * counts against those, because feedback is meant to refine the list within
+ * the mood, not to overrule the check in. Saying no to one sitcom should get
+ * you a different sitcom, not a documentary.
+ */
+export function feedbackTags(feedback, catalog, protectedTags = []) {
+  const liked = new Set();
+  const disliked = new Set();
+
+  feedback.forEach(({ mediaId, liked: isLiked }) => {
+    const item = catalog.find((m) => m.id === mediaId);
+    if (!item) return;
+    item.tags.forEach((tag) => (isLiked ? liked : disliked).add(tag));
+  });
+
+  // A tag the user said yes to elsewhere should not also count against them.
+  liked.forEach((tag) => disliked.delete(tag));
+  protectedTags.forEach((tag) => disliked.delete(tag));
+
+  return { liked: [...liked], disliked: [...disliked] };
+}
+
+/**
+ * Main entry point.
+ *
+ * @param {object} input
+ * @param {string} input.mood          one of the keys of MOOD_TARGETS
+ * @param {string[]} input.recentAcuity  e.g. ['high', 'low'], newest first
+ * @param {object[]} input.feedback    [{ mediaId, liked }] from the cards
+ * @param {number} input.limit         how many cards to return
+ * @returns {{ pressure, label, items, hiddenCount }} items sorted, best first
+ */
+export function recommend({ mood, recentAcuity = [], feedback = [], limit = 6 }) {
+  const pressure = acuityPressure(recentAcuity);
+  const label = pressureLabel(pressure, recentAcuity.length > 0);
+
+  // No mood yet means we cannot honestly explain a pick, so return nothing.
+  const target = MOOD_TARGETS[mood];
+  if (!target) return { pressure, label, items: [], hiddenCount: 0 };
+
+  const catalog = mediaData.media;
+  const { liked, disliked } = feedbackTags(feedback, catalog, target.tags);
+  const rejectedIds = feedback.filter((f) => !f.liked).map((f) => f.mediaId);
+
+  const eligible = catalog.filter((item) => {
+    // A no removes that exact title from the list outright.
+    if (rejectedIds.includes(item.id)) return false;
+    // Under high pressure, the most intense material is removed too.
+    if (label === 'high' && item.intensity >= 3) return false;
+    return true;
+  });
+
+  const baseReason = buildReason(mood, label);
+
+  const scored = eligible
+    .map((item) => {
+      const { score, matchedTags } = scoreItem(item, target.tags, pressure);
+
+      const likedHits = item.tags.filter((tag) => liked.includes(tag));
+      const dislikedHits = item.tags.filter((tag) => disliked.includes(tag));
+      const feedbackScore = (likedHits.length - dislikedHits.length) * FEEDBACK_POINTS;
+
+      return {
+        ...item,
+        score: score + feedbackScore,
+        matchedTags,
+        reason: baseReason + feedbackClause(likedHits, dislikedHits),
+      };
+    })
+    // Sort by score, then title, so the order is stable and repeatable.
+    .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
+
+  return {
+    pressure,
+    label,
+    items: scored.slice(0, limit),
+    hiddenCount: rejectedIds.length,
+  };
+}
+
+/**
+ * The optional third sentence, added only once the user has given feedback.
+ * It states what the feedback counted as, not where the item ended up, because
+ * position is decided by all three terms together.
+ */
+function feedbackClause(likedHits, dislikedHits) {
+  if (likedHits.length > 0) {
+    return ` You said yes to something ${TAG_LABELS[likedHits[0]]}, and this is too.`;
+  }
+  if (dislikedHits.length > 0) {
+    return ` You said no to something ${TAG_LABELS[dislikedHits[0]]}, which counted against this one.`;
+  }
+  return '';
+}

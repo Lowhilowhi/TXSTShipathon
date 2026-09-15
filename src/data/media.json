@@ -1,0 +1,207 @@
+{
+  "_comment": "Local media catalog. Nothing here depicts assault or abuse. `intensity` is 1 to 3, where 1 is the gentlest and safest to put on when someone is in a bad state, and 3 asks the most of the viewer. src/lib/recommend.js scores these against the user's mood and the acuity of the resources they just viewed.",
+  "_tagKey": {
+    "ensemble": "Large friendly cast, no single person carries the story.",
+    "comedy": "Funny on purpose.",
+    "warmth": "Kind. People are good to each other.",
+    "connection": "About people choosing each other.",
+    "women-winning": "A woman is competent and wins.",
+    "justice": "Something unfair gets put right.",
+    "gentle": "Nothing sudden, nothing loud.",
+    "low-stakes": "Very little can go wrong in the plot."
+  },
+  "media": [
+    {
+      "id": "parks-and-rec",
+      "title": "Parks and Recreation",
+      "type": "series",
+      "intensity": 1,
+      "tags": ["ensemble", "comedy", "warmth", "low-stakes"],
+      "description": "A small town parks department full of people who genuinely like each other. Episodes are short and the worst outcome is usually a bad meeting."
+    },
+    {
+      "id": "brooklyn-nine-nine",
+      "title": "Brooklyn Nine-Nine",
+      "type": "series",
+      "intensity": 1,
+      "tags": ["ensemble", "comedy", "low-stakes"],
+      "description": "Workplace comedy with a big cast and a joke every few seconds. Fast enough to be hard to think over."
+    },
+    {
+      "id": "the-good-place",
+      "title": "The Good Place",
+      "type": "series",
+      "intensity": 2,
+      "tags": ["ensemble", "comedy", "connection"],
+      "description": "Four strangers try to become better people. Silly on the surface, and quietly about whether anyone is beyond repair."
+    },
+    {
+      "id": "abbott-elementary",
+      "title": "Abbott Elementary",
+      "type": "series",
+      "intensity": 1,
+      "tags": ["ensemble", "comedy", "warmth", "low-stakes"],
+      "description": "Teachers at an underfunded school keep showing up for each other. Warm, funny, twenty minutes an episode."
+    },
+    {
+      "id": "community",
+      "title": "Community",
+      "type": "series",
+      "intensity": 2,
+      "tags": ["ensemble", "comedy"],
+      "description": "A study group at a community college. Dense, fast, and strange enough to take up your whole attention."
+    },
+    {
+      "id": "schitts-creek",
+      "title": "Schitt's Creek",
+      "type": "series",
+      "intensity": 1,
+      "tags": ["ensemble", "comedy", "warmth", "connection"],
+      "description": "A family loses everything and slowly becomes kinder. Nobody in this town is cruel for long."
+    },
+    {
+      "id": "ted-lasso",
+      "title": "Ted Lasso",
+      "type": "series",
+      "intensity": 2,
+      "tags": ["ensemble", "warmth", "connection"],
+      "description": "A relentlessly decent coach in a job he is not qualified for. About being gentle with people on purpose."
+    },
+    {
+      "id": "taskmaster",
+      "title": "Taskmaster",
+      "type": "series",
+      "intensity": 1,
+      "tags": ["ensemble", "comedy", "low-stakes", "gentle"],
+      "description": "Comedians complete pointless tasks badly. Nothing is at stake, ever, and you can start at any episode."
+    },
+    {
+      "id": "queer-eye",
+      "title": "Queer Eye",
+      "type": "series",
+      "intensity": 2,
+      "tags": ["warmth", "connection", "ensemble"],
+      "description": "Five people spend a week being unreasonably kind to a stranger. Expect to cry, in the good way."
+    },
+    {
+      "id": "bake-off",
+      "title": "The Great British Bake Off",
+      "type": "series",
+      "intensity": 1,
+      "tags": ["gentle", "low-stakes", "warmth"],
+      "description": "Amateur bakers in a tent being polite to each other. The worst thing that happens is a collapsed cake."
+    },
+    {
+      "id": "pottery-throw-down",
+      "title": "The Great Pottery Throw Down",
+      "type": "series",
+      "intensity": 1,
+      "tags": ["gentle", "low-stakes", "warmth"],
+      "description": "Same shape as Bake Off, but clay. Slow hands, quiet rooms, people being encouraging."
+    },
+    {
+      "id": "paddington-2",
+      "title": "Paddington 2",
+      "type": "film",
+      "intensity": 1,
+      "tags": ["gentle", "warmth", "connection", "comedy"],
+      "description": "A bear tries to buy his aunt a birthday present. Sincerely one of the kindest films made."
+    },
+    {
+      "id": "kikis-delivery-service",
+      "title": "Kiki's Delivery Service",
+      "type": "film",
+      "intensity": 1,
+      "tags": ["gentle", "warmth", "low-stakes"],
+      "description": "A young witch moves to a new town and starts a delivery business. Mostly about being tired and finding your feet again."
+    },
+    {
+      "id": "my-neighbor-totoro",
+      "title": "My Neighbor Totoro",
+      "type": "film",
+      "intensity": 1,
+      "tags": ["gentle", "warmth", "low-stakes"],
+      "description": "Two sisters in the countryside meet a forest spirit. Almost no plot. Extremely safe to fall asleep to."
+    },
+    {
+      "id": "somebody-somewhere",
+      "title": "Somebody Somewhere",
+      "type": "series",
+      "intensity": 2,
+      "tags": ["warmth", "connection"],
+      "description": "A woman in her forties finds an unlikely group of friends in her hometown. Quiet, funny, and about being seen."
+    },
+    {
+      "id": "our-flag-means-death",
+      "title": "Our Flag Means Death",
+      "type": "series",
+      "intensity": 2,
+      "tags": ["ensemble", "comedy", "warmth", "connection"],
+      "description": "A soft aristocrat decides to become a pirate. An ensemble of misfits who become a family."
+    },
+    {
+      "id": "legally-blonde",
+      "title": "Legally Blonde",
+      "type": "film",
+      "intensity": 1,
+      "tags": ["women-winning", "comedy", "justice"],
+      "description": "Everyone underestimates Elle Woods and every one of them is wrong. She wins the case on her own terms."
+    },
+    {
+      "id": "hidden-figures",
+      "title": "Hidden Figures",
+      "type": "film",
+      "intensity": 2,
+      "tags": ["women-winning", "justice", "ensemble"],
+      "description": "Three mathematicians are essential to the space program and have to fight to be allowed to do the work."
+    },
+    {
+      "id": "oceans-eight",
+      "title": "Ocean's Eight",
+      "type": "film",
+      "intensity": 2,
+      "tags": ["women-winning", "ensemble", "justice"],
+      "description": "A crew of women plan a heist and execute it perfectly. Competence from start to finish, and they get away with it."
+    },
+    {
+      "id": "erin-brockovich",
+      "title": "Erin Brockovich",
+      "type": "film",
+      "intensity": 3,
+      "tags": ["women-winning", "justice"],
+      "description": "A woman with no legal training takes on a utility company poisoning a town, and wins. Satisfying, but it does not go easy on you."
+    },
+    {
+      "id": "a-league-of-their-own",
+      "title": "A League of Their Own",
+      "type": "film",
+      "intensity": 2,
+      "tags": ["women-winning", "ensemble", "warmth"],
+      "description": "A women's baseball league in the 1940s. Being good at something in public, with a team behind you."
+    },
+    {
+      "id": "bend-it-like-beckham",
+      "title": "Bend It Like Beckham",
+      "type": "film",
+      "intensity": 1,
+      "tags": ["women-winning", "warmth", "comedy"],
+      "description": "A teenager plays football against her family's wishes and is very good at it. Ends well for her."
+    },
+    {
+      "id": "ologies",
+      "title": "Ologies",
+      "type": "podcast",
+      "intensity": 1,
+      "tags": ["gentle", "low-stakes", "warmth"],
+      "description": "A friendly interview with a different scientist each week. Something to put in your ears that is interesting but asks nothing of you."
+    },
+    {
+      "id": "old-enough",
+      "title": "Old Enough!",
+      "type": "series",
+      "intensity": 1,
+      "tags": ["gentle", "low-stakes", "warmth"],
+      "description": "Small children run their first errand alone. Episodes are about ten minutes and nothing bad happens."
+    }
+  ]
+}
