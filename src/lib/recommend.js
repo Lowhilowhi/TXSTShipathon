@@ -261,6 +261,48 @@ export function linkFor(item) {
   }
 }
 
+// How many repeats before the app stops offering media and offers a person.
+export const SUPPORT_THRESHOLD = 3;
+
+/**
+ * The return path: Entertainment feeding back into Health.
+ *
+ * The forward path is viewing a resource changing what gets recommended. This
+ * is the other direction. If someone keeps landing on the same bad feeling, or
+ * keeps rejecting what they are offered, that is evidence the media side is not
+ * doing its job, and the right response is to put a person back in front of
+ * them rather than a seventh thing to watch.
+ *
+ * Pure, like everything else in this file. It reads signals and returns a
+ * verdict; the screen decides how to draw it.
+ */
+export function supportSignal({ moodHistory = [], feedback = [] }) {
+  const current = moodHistory.length ? moodHistory[moodHistory.length - 1] : null;
+  const repeats = current ? moodHistory.filter((m) => m === current).length : 0;
+  const rejections = feedback.filter((f) => !f.liked).length;
+
+  // Mood is checked first: coming back to the same place is the stronger signal.
+  if (repeats >= SUPPORT_THRESHOLD) {
+    return {
+      triggered: true,
+      kind: 'mood',
+      headline: 'This keeps bringing you back to the same place.',
+      reason: `You have checked in as ${current} ${repeats} times now. Sometimes the thing that helps is not another thing to watch, and that is not a failure on your part.`,
+    };
+  }
+
+  if (rejections >= SUPPORT_THRESHOLD) {
+    return {
+      triggered: true,
+      kind: 'rejection',
+      headline: 'Nothing here is landing.',
+      reason: `You have passed on ${rejections} of these. When that happens it usually means the problem is not the recommendations, so here is the other kind of help.`,
+    };
+  }
+
+  return { triggered: false };
+}
+
 /** The saved items, newest first, resolved back to full catalog entries. */
 export function savedItems(feedback) {
   return feedback

@@ -17,6 +17,9 @@ export function AppStateProvider({ children }) {
   const [recentAcuity, setRecentAcuity] = useState([]);
   // One of 'numb' | 'spiraling' | 'angry' | 'hollow', or null before check in.
   const [mood, setMood] = useState(null);
+  // Every mood selection in order, so the app can notice someone coming back
+  // to the same bad place. This is the Entertainment -> Health return path.
+  const [moodHistory, setMoodHistory] = useState([]);
   // What they want to do: 'in' | 'out' | 'hands' | 'people', or null.
   const [intent, setIntent] = useState(null);
   // If staying in: 'watch' | 'listen' | 'read', or null.
@@ -31,6 +34,7 @@ export function AppStateProvider({ children }) {
 
   const recordMood = useCallback((nextMood) => {
     setMood(nextMood);
+    setMoodHistory((prev) => [...prev, nextMood]);
   }, []);
 
   // Changing what you want to do drops the format, so the next question is
@@ -60,6 +64,7 @@ export function AppStateProvider({ children }) {
     () => ({
       recentAcuity,
       mood,
+      moodHistory,
       intent,
       format,
       feedback,
@@ -74,6 +79,7 @@ export function AppStateProvider({ children }) {
     [
       recentAcuity,
       mood,
+      moodHistory,
       intent,
       format,
       feedback,

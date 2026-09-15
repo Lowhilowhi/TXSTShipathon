@@ -14,7 +14,7 @@ import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-na
 import MediaCard from '@/components/media-card';
 import activities from '@/data/activities.json';
 import resources from '@/data/resources.json';
-import { FORMAT_LABELS, recommend } from '@/lib/recommend';
+import { FORMAT_LABELS, recommend, supportSignal } from '@/lib/recommend';
 import { useAppState } from '@/lib/state';
 import { acuityColors, colors, maxWidth, radius, space } from '@/lib/theme';
 
@@ -38,6 +38,7 @@ export default function RightNowScreen() {
   const router = useRouter();
   const {
     mood,
+    moodHistory,
     intent,
     format,
     recentAcuity,
@@ -57,6 +58,12 @@ export default function RightNowScreen() {
   });
 
   const supportResources = resources.filter((r) => r.acuity === 'low');
+
+  // Entertainment writing back into Health. Deliberately a support level
+  // resource, never a high acuity one: three taps is not evidence of an
+  // emergency, and treating it as one would be alarming.
+  const signal = supportSignal({ moodHistory, feedback });
+  const nudgeResource = supportResources[0];
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
@@ -208,6 +215,28 @@ export default function RightNowScreen() {
                     <Text style={styles.resetText}>Start the list over</Text>
                   </Pressable>
                 </View>
+              </View>
+            ) : null}
+
+            {signal.triggered && nudgeResource ? (
+              <View style={styles.nudge}>
+                <Text style={styles.nudgeLabel}>Because of how this is going</Text>
+                <Text style={styles.nudgeHeadline}>{signal.headline}</Text>
+                <Text style={styles.nudgeReason}>{signal.reason}</Text>
+
+                <Pressable
+                  onPress={() => router.push(`/resource/${nudgeResource.id}`)}
+                  style={({ pressed }) => [styles.nudgeCard, pressed && styles.pressed]}>
+                  <Text style={styles.nudgeCardTitle}>{nudgeResource.name}</Text>
+                  <Text style={styles.nudgeCardBody}>{nudgeResource.whatItDoes}</Text>
+                  <Text style={styles.nudgeCardMeta}>{nudgeResource.doesNotRequire}</Text>
+                </Pressable>
+
+                <Pressable
+                  onPress={() => router.push('/resources')}
+                  style={({ pressed }) => [styles.reset, pressed && styles.pressed]}>
+                  <Text style={styles.resetText}>See all the options</Text>
+                </Pressable>
               </View>
             ) : null}
 
@@ -377,6 +406,38 @@ const styles = StyleSheet.create({
   chipMoodText: { fontSize: 14, fontWeight: '600', color: colors.accent },
   chipText: { fontSize: 14, fontWeight: '600' },
   stateNote: { fontSize: 14, lineHeight: 21, color: colors.textSoft },
+
+  // Deliberately the loudest thing on the screen. When this appears it matters
+  // more than any recommendation under it.
+  nudge: {
+    backgroundColor: colors.noteSoft,
+    borderRadius: radius,
+    borderWidth: 2,
+    borderColor: colors.note,
+    padding: space.md,
+    gap: space.sm,
+    marginTop: space.md,
+  },
+  nudgeLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.note,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  nudgeHeadline: { fontSize: 20, lineHeight: 28, fontWeight: '700', color: colors.text },
+  nudgeReason: { fontSize: 15, lineHeight: 23, color: colors.text },
+  nudgeCard: {
+    backgroundColor: colors.surface,
+    borderRadius: radius - 4,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: space.md,
+    gap: space.xs,
+  },
+  nudgeCardTitle: { fontSize: 18, fontWeight: '600', color: colors.text },
+  nudgeCardBody: { fontSize: 15, lineHeight: 23, color: colors.text },
+  nudgeCardMeta: { fontSize: 14, lineHeight: 21, color: colors.accent, fontStyle: 'italic' },
 
   changed: {
     backgroundColor: colors.surface,
