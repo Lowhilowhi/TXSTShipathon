@@ -53,6 +53,12 @@ produced it.
 Entertainment stops being a catalog and becomes dosage. Health stops requiring
 you to walk into an office and say it out loud to a stranger.
 
+And it runs the other way too. If you keep coming back to the same feeling, or
+keep rejecting what you are handed, the app reads that as the media side failing
+and puts a support resource back in front of you, saying which signal made it
+appear. Watching is not working, so here is a person. That is Entertainment
+writing into Health.
+
 **What becomes possible only because these two collided: a recovery loop that
 learns which stories actually move a specific survivor, delivered through the one
 thing people will still open at 2am.**
@@ -63,10 +69,13 @@ thing people will still open at 2am.**
 
 - Resource directory: 15 verified entries across campus, Hays County, and national
 - Every entry states what it does **and what it does not require**, so confidential channels are visibly distinguishable from mandatory reporters
-- Check in and feed merged into one screen, so cause and effect is visible in a single view instead of across a navigation
-- Recommendation engine scoring on stated feeling plus recorded acuity
-- A reason line on every card
-- Yes or no feedback that visibly reweights what comes next
+- One screen asks three things in sequence, each appearing only once the last is answered: how you are, what you want to do, and what kind. Cause and effect stays in a single view instead of across a navigation
+- "What do you want to do" is not only media. It branches to things to do with your hands, small ways out of the house, and people who get it, which routes straight back into the support level entries of the directory
+- Recommendation engine scoring on stated feeling plus recorded acuity, over 71 titles: films, series, books, music, podcasts, audiobooks and YouTube channels, never mixed into one list
+- A reason line on every card naming both the feeling and the acuity
+- Save or skip feedback that visibly reweights what comes next, with saved items moving to a library and being replaced
+- A link on every card to where you can actually watch, read or listen to it
+- A support resource that surfaces itself when the media side is not working
 
 ## How it works, technically
 
@@ -76,16 +85,40 @@ Stack: React Native, Expo SDK 57, Expo Router. No backend.
 high, medium, or low, plus `whatItDoes` and `doesNotRequire`.
 
 **State.** `src/lib/state.js`, React Context. Holds recently viewed acuity values,
-current feeling, and feedback responses. In memory only.
+every feeling selected in order, and feedback responses. In memory only.
 
-**The coupling.** Opening a resource detail writes its acuity into context.
-`src/lib/recommend.js` is a pure scoring function over `media.json`, taking
-feeling and recent acuity as inputs. High recent acuity suppresses high intensity
-content: after viewing the protective order entry, an intensity 3 title like
-Erin Brockovich is filtered out where it would otherwise score well.
+**The coupling, forward.** Opening a resource detail writes its acuity into
+context. `src/lib/recommend.js` is a pure scoring function over `media.json`,
+taking feeling and recent acuity as inputs. Recent acuity becomes a pressure
+value from 0 to 1, weighting the most recent view double. Rising pressure scores
+gentler titles higher and, at the top of the range, removes the most intense
+material outright.
 
-This is the whole thesis in one line of data flow. The Health side writes acuity.
-The Entertainment side reads it. Remove either and the other stops working.
+Same feeling, same format, one difference between these two runs:
+
+| | What comes back |
+|---|---|
+| Nothing opened yet | Enola Holmes, **Erin Brockovich**, Hidden Figures, Ladies First, Legally Blonde, Ocean's Eight |
+| After opening the protective order entry | Enola Holmes, Legally Blonde, **Bend It Like Beckham**, Hidden Figures, **Julie & Julia**, Ladies First |
+
+Erin Brockovich is the only intensity 3 title in that set and it is gone. Two of
+the gentlest films move in behind it. Nothing was touched on the feed screen.
+
+**The coupling, backward.** `supportSignal()` in the same file watches for the
+same feeling picked three or more times, or three or more rejections. Either one
+surfaces a support level resource in the feed with the signal that produced it
+written on it. Deliberately support level and never high acuity: three taps is
+not evidence of an emergency, and escalating to a protective order on that basis
+would be alarming rather than helpful.
+
+This is the whole thesis in two lines of data flow. Health writes acuity and
+Entertainment reads it. Entertainment writes failure and Health answers. Remove
+either side and the other stops working.
+
+**Content safety.** Every title carries an intensity of 1 to 3, and intensity 3
+is unreachable while acuity pressure is high. Anything touching assault or abuse
+directly carries a content note rendered above the reasoning, always visible,
+never behind a tap.
 
 ## Privacy
 
@@ -113,7 +146,7 @@ volunteers, and visibility, and route people to them.
 - Evidence logging with a timestamped trail
 - Live chat and warm handoff to a hotline
 - Therapist and specialist matching, filtered by what it costs
-- Community: not caseworkers, just people who get it, and who will go out with you
+- Community: not caseworkers, just people who get it, and who will go out with you. The "people who get it" branch is the stub of this, routing to real support services; the actual survivor to survivor part needs a backend
 - Peer reviews of institutions, so you know which office actually helps
 
 ---
@@ -125,7 +158,11 @@ npm install
 npx expo start
 ```
 
-Scan the QR with Expo Go.
+Scan the QR with Expo Go, or press `w` to open it in a browser at
+`http://localhost:8081`.
+
+State is in memory, so a refresh clears everything. That is the design, not a
+bug, and it is worth saying before someone reloads mid demo and thinks it broke.
 
 ## Sources
 
