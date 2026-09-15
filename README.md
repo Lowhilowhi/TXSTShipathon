@@ -130,6 +130,24 @@ subpoena, and nothing for anyone to find on your phone.
 
 ## The vision, not yet built
 
+**Somewhere to actually talk to each other.**
+Right now the app can hand you a support group's phone number. It cannot let you
+say anything to anybody. The version I want is a place survivors can talk:
+accounts, public channels organized around what people are actually going
+through, and private one to one messages for when a channel is too much. Less a
+feature bolted onto a directory and more its own small social network, where the
+whole membership already understands the thing you would otherwise have to
+explain from the beginning.
+
+It is not in this build for two reasons. The obvious one is that it needs what
+this app deliberately does not have: a backend, accounts, authentication, and
+stored messages. The real one is moderation. An unmoderated room full of
+survivors is not a support network, it is a place people get found, groomed, and
+hurt again, and the privacy promise above stops being true the moment messages
+are stored somewhere subpoenable. That is not a weekend feature. It is the part
+that has to be built most carefully, and building it badly would be worse than
+not building it.
+
 **Research that was never done on us.**
 Women are still under enrolled in the trials that decide how we get treated.
 Women are 60% of psychiatric patients and 42% of psychiatric trial participants.
@@ -146,7 +164,7 @@ volunteers, and visibility, and route people to them.
 - Evidence logging with a timestamped trail
 - Live chat and warm handoff to a hotline
 - Therapist and specialist matching, filtered by what it costs
-- Community: not caseworkers, just people who get it, and who will go out with you. The "people who get it" branch is the stub of this, routing to real support services; the actual survivor to survivor part needs a backend
+- Community: not caseworkers, just people who get it, and who will go out with you. The "people who get it" branch is the stub of this, routing to real support services; the actual survivor to survivor part needs the backend described above
 - Peer reviews of institutions, so you know which office actually helps
 
 ---
@@ -163,6 +181,14 @@ Scan the QR with Expo Go, or press `w` to open it in a browser at
 
 State is in memory, so a refresh clears everything. That is the design, not a
 bug, and it is worth saying before someone reloads mid demo and thinks it broke.
+
+## Walkthrough
+
+1. **Where are you right now** → pick a feeling. **What do you want to do** → "Nothing. I am a homebody". **What kind** → "Something to watch". Note the chips: `acuity: none`. Erin Brockovich is in the list.
+2. Back to home → **Find help** → County → **Protective Order (Hays County)**. The detail view records it.
+3. Back to the feed. Same feeling, same format, but the chips now read `acuity: high` and Erin Brockovich is gone, replaced by gentler films. Read any **Why this** line aloud.
+4. Tap the same feeling twice more. A support resource surfaces itself, saying which signal produced it.
+5. **Save it** on any card → it confirms, leaves the list, is replaced, and lands in your library with a link.
 
 ## Sources
 
