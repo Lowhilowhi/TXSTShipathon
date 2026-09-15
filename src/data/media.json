@@ -1,5 +1,5 @@
 {
-  "_comment": "Local media catalog. Nothing here depicts assault or abuse. `intensity` is 1 to 3, where 1 is the gentlest and safest to put on when someone is in a bad state, and 3 asks the most of the viewer. src/lib/recommend.js scores these against the user's mood and the acuity of the resources they just viewed.",
+  "_comment": "Local media catalog. `intensity` is 1 to 3, where 1 is the gentlest and safest to put on when someone is in a bad state, and 3 asks the most of the viewer. Anything that touches assault, abuse or trauma directly is intensity 3 and carries a contentNote, which the card always shows. src/lib/recommend.js scores these against the user's mood and the acuity of the resources they just viewed, and builds the where-to-find-it link from the title and type.",
   "_tagKey": {
     "ensemble": "Large friendly cast, no single person carries the story.",
     "comedy": "Funny on purpose.",
@@ -76,6 +76,46 @@
       "description": "Comedians complete pointless tasks badly. Nothing is at stake, ever, and you can start at any episode."
     },
     {
+      "id": "derry-girls",
+      "title": "Derry Girls",
+      "type": "series",
+      "intensity": 2,
+      "tags": ["ensemble", "comedy"],
+      "description": "Teenage girls being loud and ridiculous in 1990s Northern Ireland. Short episodes, very fast jokes."
+    },
+    {
+      "id": "new-girl",
+      "title": "New Girl",
+      "type": "series",
+      "intensity": 1,
+      "tags": ["ensemble", "comedy", "low-stakes", "warmth"],
+      "description": "Roommates who are bad at being adults. Easy to have on with half your attention."
+    },
+    {
+      "id": "gilmore-girls",
+      "title": "Gilmore Girls",
+      "type": "series",
+      "intensity": 1,
+      "tags": ["warmth", "connection", "low-stakes", "gentle"],
+      "description": "A mother and daughter talk very fast in a small town where almost nothing bad happens."
+    },
+    {
+      "id": "jane-the-virgin",
+      "title": "Jane the Virgin",
+      "type": "series",
+      "intensity": 2,
+      "tags": ["ensemble", "warmth", "comedy", "connection"],
+      "description": "A telenovela send up with a huge heart. Three generations of women who are firmly on each other's side."
+    },
+    {
+      "id": "mrs-maisel",
+      "title": "The Marvelous Mrs. Maisel",
+      "type": "series",
+      "intensity": 2,
+      "tags": ["women-winning", "comedy"],
+      "description": "A 1950s housewife discovers she is a very good stand up comic and refuses to stop."
+    },
+    {
       "id": "queer-eye",
       "title": "Queer Eye",
       "type": "series",
@@ -98,6 +138,30 @@
       "intensity": 1,
       "tags": ["gentle", "low-stakes", "warmth"],
       "description": "Same shape as Bake Off, but clay. Slow hands, quiet rooms, people being encouraging."
+    },
+    {
+      "id": "old-enough",
+      "title": "Old Enough!",
+      "type": "series",
+      "intensity": 1,
+      "tags": ["gentle", "low-stakes", "warmth"],
+      "description": "Small children run their first errand alone. Episodes are about ten minutes and nothing bad happens."
+    },
+    {
+      "id": "somebody-somewhere",
+      "title": "Somebody Somewhere",
+      "type": "series",
+      "intensity": 2,
+      "tags": ["warmth", "connection"],
+      "description": "A woman in her forties finds an unlikely group of friends in her hometown. Quiet, funny, and about being seen."
+    },
+    {
+      "id": "our-flag-means-death",
+      "title": "Our Flag Means Death",
+      "type": "series",
+      "intensity": 2,
+      "tags": ["ensemble", "comedy", "warmth", "connection"],
+      "description": "A soft aristocrat decides to become a pirate. An ensemble of misfits who become a family."
     },
     {
       "id": "paddington-2",
@@ -124,20 +188,28 @@
       "description": "Two sisters in the countryside meet a forest spirit. Almost no plot. Extremely safe to fall asleep to."
     },
     {
-      "id": "somebody-somewhere",
-      "title": "Somebody Somewhere",
-      "type": "series",
-      "intensity": 2,
-      "tags": ["warmth", "connection"],
-      "description": "A woman in her forties finds an unlikely group of friends in her hometown. Quiet, funny, and about being seen."
+      "id": "moana",
+      "title": "Moana",
+      "type": "film",
+      "intensity": 1,
+      "tags": ["women-winning", "gentle", "warmth"],
+      "description": "A girl takes a boat past the reef because nobody else will. Good songs, and she is right the whole time."
     },
     {
-      "id": "our-flag-means-death",
-      "title": "Our Flag Means Death",
-      "type": "series",
+      "id": "encanto",
+      "title": "Encanto",
+      "type": "film",
+      "intensity": 1,
+      "tags": ["warmth", "connection", "gentle"],
+      "description": "A family with magic, and the one girl without any. About being loved without having to be useful."
+    },
+    {
+      "id": "ladies-first",
+      "title": "Ladies First",
+      "type": "film",
       "intensity": 2,
-      "tags": ["ensemble", "comedy", "warmth", "connection"],
-      "description": "A soft aristocrat decides to become a pirate. An ensemble of misfits who become a family."
+      "tags": ["women-winning", "justice"],
+      "description": "Documentary about Deepika Kumari, who went from a village in India to being the world's top ranked archer. She was told no at every stage and kept shooting."
     },
     {
       "id": "legally-blonde",
@@ -188,6 +260,70 @@
       "description": "A teenager plays football against her family's wishes and is very good at it. Ends well for her."
     },
     {
+      "id": "enola-holmes",
+      "title": "Enola Holmes",
+      "type": "film",
+      "intensity": 1,
+      "tags": ["women-winning", "comedy", "justice"],
+      "description": "Sherlock's younger sister solves the case herself and is extremely pleased about it."
+    },
+    {
+      "id": "the-princess-diaries",
+      "title": "The Princess Diaries",
+      "type": "film",
+      "intensity": 1,
+      "tags": ["women-winning", "warmth", "comedy", "low-stakes"],
+      "description": "An awkward teenager finds out she is royalty. Nothing bad happens to her and everyone comes around."
+    },
+    {
+      "id": "sister-act",
+      "title": "Sister Act",
+      "type": "film",
+      "intensity": 1,
+      "tags": ["ensemble", "comedy", "women-winning", "warmth"],
+      "description": "A lounge singer hides in a convent and accidentally builds the best choir in the city."
+    },
+    {
+      "id": "mamma-mia",
+      "title": "Mamma Mia!",
+      "type": "film",
+      "intensity": 1,
+      "tags": ["ensemble", "comedy", "warmth", "low-stakes"],
+      "description": "ABBA songs, a Greek island, and women who have been friends for thirty years. Turn your brain off entirely."
+    },
+    {
+      "id": "crazy-rich-asians",
+      "title": "Crazy Rich Asians",
+      "type": "film",
+      "intensity": 2,
+      "tags": ["ensemble", "warmth", "comedy", "women-winning"],
+      "description": "A woman meets her boyfriend's impossible family and refuses to shrink for them."
+    },
+    {
+      "id": "booksmart",
+      "title": "Booksmart",
+      "type": "film",
+      "intensity": 2,
+      "tags": ["ensemble", "comedy", "connection"],
+      "description": "Two best friends try to have one good night before graduation. Mostly about the friendship."
+    },
+    {
+      "id": "little-women",
+      "title": "Little Women",
+      "type": "film",
+      "intensity": 2,
+      "tags": ["women-winning", "warmth", "ensemble", "connection"],
+      "description": "Four sisters, and one of them refuses to let anyone else decide what her life is for."
+    },
+    {
+      "id": "julie-and-julia",
+      "title": "Julie & Julia",
+      "type": "film",
+      "intensity": 1,
+      "tags": ["women-winning", "gentle", "warmth", "low-stakes"],
+      "description": "Two women, decades apart, cook their way out of feeling stuck. Very little conflict, a lot of butter."
+    },
+    {
       "id": "ologies",
       "title": "Ologies",
       "type": "podcast",
@@ -196,12 +332,175 @@
       "description": "A friendly interview with a different scientist each week. Something to put in your ears that is interesting but asks nothing of you."
     },
     {
-      "id": "old-enough",
-      "title": "Old Enough!",
-      "type": "series",
+      "id": "renaissance",
+      "title": "Beyoncé - Renaissance",
+      "type": "music",
       "intensity": 1,
-      "tags": ["gentle", "low-stakes", "warmth"],
-      "description": "Small children run their first errand alone. Episodes are about ten minutes and nothing bad happens."
+      "tags": ["women-winning", "low-stakes"],
+      "description": "A dance record built to be played loud. Made for moving around your room rather than sitting still."
+    },
+    {
+      "id": "special-lizzo",
+      "title": "Lizzo - Special",
+      "type": "music",
+      "intensity": 1,
+      "tags": ["women-winning", "warmth"],
+      "description": "Relentlessly on your side. Hard to keep a bad posture through it."
+    },
+    {
+      "id": "guts",
+      "title": "Olivia Rodrigo - GUTS",
+      "type": "music",
+      "intensity": 2,
+      "tags": ["women-winning"],
+      "description": "Loud, furious, and funny about it. For when you want the anger matched rather than soothed."
+    },
+    {
+      "id": "midwest-princess",
+      "title": "Chappell Roan - The Rise and Fall of a Midwest Princess",
+      "type": "music",
+      "intensity": 1,
+      "tags": ["women-winning", "comedy"],
+      "description": "Big theatrical pop about deciding you are the main character. Best played at volume."
+    },
+    {
+      "id": "good-news",
+      "title": "Megan Thee Stallion - Good News",
+      "type": "music",
+      "intensity": 2,
+      "tags": ["women-winning"],
+      "description": "Pure confidence on a loop. The getting ready record."
+    },
+    {
+      "id": "1989",
+      "title": "Taylor Swift - 1989",
+      "type": "music",
+      "intensity": 1,
+      "tags": ["low-stakes", "warmth", "comedy"],
+      "description": "Bright, familiar pop you already know the words to. Easy company."
+    },
+    {
+      "id": "golden-hour",
+      "title": "Kacey Musgraves - Golden Hour",
+      "type": "music",
+      "intensity": 1,
+      "tags": ["gentle", "warmth", "low-stakes"],
+      "description": "Warm and slow without being sad. Good for a quiet evening that you want to stay quiet."
+    },
+    {
+      "id": "come-away-with-me",
+      "title": "Norah Jones - Come Away With Me",
+      "type": "music",
+      "intensity": 1,
+      "tags": ["gentle", "low-stakes"],
+      "description": "Soft piano and a low voice. Safe to fall asleep to."
+    },
+    {
+      "id": "love-deluxe",
+      "title": "Sade - Love Deluxe",
+      "type": "music",
+      "intensity": 1,
+      "tags": ["gentle", "warmth", "low-stakes"],
+      "description": "Calm, smooth, and completely unhurried. Nothing on it will startle you."
+    },
+    {
+      "id": "lofi-beats",
+      "title": "Lo-fi Beats to Relax To",
+      "type": "music",
+      "intensity": 1,
+      "tags": ["gentle", "low-stakes"],
+      "description": "Instrumental, no lyrics, no surprises. For when words are too much but silence is worse."
+    },
+    {
+      "id": "beach-read",
+      "title": "Beach Read - Emily Henry",
+      "type": "book",
+      "intensity": 1,
+      "tags": ["warmth", "connection", "comedy"],
+      "description": "Two writers, one summer, a slow burn romance. Funny and low stakes throughout."
+    },
+    {
+      "id": "the-hating-game",
+      "title": "The Hating Game - Sally Thorne",
+      "type": "book",
+      "intensity": 1,
+      "tags": ["comedy", "warmth", "connection"],
+      "description": "Enemies to lovers in an office. Fast, funny, and it ends exactly how you want it to."
+    },
+    {
+      "id": "red-white-royal-blue",
+      "title": "Red, White & Royal Blue - Casey McQuiston",
+      "type": "book",
+      "intensity": 1,
+      "tags": ["comedy", "warmth", "connection"],
+      "description": "A rom com with actual jokes and a very soft heart. Escapist in the best way."
+    },
+    {
+      "id": "cerulean-sea",
+      "title": "The House in the Cerulean Sea - TJ Klune",
+      "type": "book",
+      "intensity": 1,
+      "tags": ["gentle", "warmth", "connection"],
+      "description": "A caseworker is sent to an orphanage of unusual children. Kind on every single page."
+    },
+    {
+      "id": "anne-of-green-gables",
+      "title": "Anne of Green Gables - L. M. Montgomery",
+      "type": "book",
+      "intensity": 1,
+      "tags": ["gentle", "warmth", "low-stakes"],
+      "description": "An orphan talks her way into a family. Comfort reading with no teeth in it."
+    },
+    {
+      "id": "eleanor-oliphant",
+      "title": "Eleanor Oliphant Is Completely Fine - Gail Honeyman",
+      "type": "book",
+      "intensity": 2,
+      "tags": ["warmth", "connection"],
+      "description": "A lonely woman is slowly pulled back into the world by an ordinary friendship.",
+      "contentNote": "Touches on childhood abuse and a suicide attempt, without graphic detail."
+    },
+    {
+      "id": "braiding-sweetgrass",
+      "title": "Braiding Sweetgrass - Robin Wall Kimmerer",
+      "type": "book",
+      "intensity": 1,
+      "tags": ["gentle", "warmth"],
+      "description": "Essays on plants, science and gratitude. Can be read a few pages at a time with nothing lost."
+    },
+    {
+      "id": "untamed",
+      "title": "Untamed - Glennon Doyle",
+      "type": "book",
+      "intensity": 2,
+      "tags": ["women-winning", "connection"],
+      "description": "Short chapters about stopping being who you were told to be. Easy to dip into anywhere."
+    },
+    {
+      "id": "yes-please",
+      "title": "Yes Please - Amy Poehler",
+      "type": "book",
+      "intensity": 1,
+      "tags": ["comedy", "women-winning", "warmth"],
+      "description": "Funny essays from someone who likes her friends a lot. No narrative to keep track of."
+    },
+    {
+      "id": "know-my-name",
+      "title": "Know My Name - Chanel Miller",
+      "type": "book",
+      "intensity": 3,
+      "tags": ["women-winning", "justice"],
+      "description": "The author reclaims her own story from a court case that tried to reduce her to a footnote. Widely described by survivors as the book that made them feel real.",
+      "contentNote": "Describes a sexual assault and the trial that followed in detail. Many people find it steadying, but not early on."
+    },
+    {
+      "id": "what-my-bones-know",
+      "title": "What My Bones Know - Stephanie Foo",
+      "type": "book",
+      "intensity": 3,
+      "tags": ["connection", "justice"],
+      "description": "A journalist researches her own complex PTSD and what actually helped.",
+      "contentNote": "Detailed accounts of childhood abuse and of trauma symptoms."
     }
   ]
 }

@@ -34,6 +34,11 @@ export function AppStateProvider({ children }) {
     setFeedback((prev) => [...prev.filter((f) => f.mediaId !== mediaId), { mediaId, liked }]);
   }, []);
 
+  // Take something back out of the library, returning it to the feed.
+  const removeFeedback = useCallback((mediaId) => {
+    setFeedback((prev) => prev.filter((f) => f.mediaId !== mediaId));
+  }, []);
+
   const clearFeedback = useCallback(() => setFeedback([]), []);
 
   const value = useMemo(
@@ -44,9 +49,19 @@ export function AppStateProvider({ children }) {
       recordAcuity,
       recordMood,
       recordFeedback,
+      removeFeedback,
       clearFeedback,
     }),
-    [recentAcuity, mood, feedback, recordAcuity, recordMood, recordFeedback, clearFeedback]
+    [
+      recentAcuity,
+      mood,
+      feedback,
+      recordAcuity,
+      recordMood,
+      recordFeedback,
+      removeFeedback,
+      clearFeedback,
+    ]
   );
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;

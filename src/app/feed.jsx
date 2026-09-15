@@ -7,9 +7,10 @@
 // This screen holds no matching logic of its own. It reads shared state, hands
 // it to the pure engine in src/lib/recommend.js, and renders the result.
 
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { recommend } from '@/lib/recommend';
+import { linkFor, recommend } from '@/lib/recommend';
 import { useAppState } from '@/lib/state';
 import { acuityColors, colors, maxWidth, radius, space } from '@/lib/theme';
 
@@ -24,8 +25,9 @@ const OPTIONS = [
 ];
 
 export default function RightNowScreen() {
+  const router = useRouter();
   const { mood, recentAcuity, feedback, recordMood, recordFeedback, clearFeedback } = useAppState();
-  const { label, items, hiddenCount } = recommend({ mood, recentAcuity, feedback });
+  const { label, items, hiddenCount, savedCount } = recommend({ mood, recentAcuity, feedback });
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
@@ -91,57 +93,68 @@ export default function RightNowScreen() {
             {feedback.length > 0 ? (
               <View style={styles.changed}>
                 <Text style={styles.changedText}>
-                  This list just changed.{' '}
+                  {savedCount > 0
+                    ? `${savedCount} saved to your library and ${savedCount === 1 ? 'it is' : 'they are'} out of this list. `
+                    : ''}
                   {hiddenCount > 0
-                    ? `${hiddenCount} ${hiddenCount === 1 ? 'title is' : 'titles are'} gone because you said no`
-                    : 'Nothing was removed'}
-                  {feedback.some((f) => f.liked)
-                    ? ', and anything sharing tags with your yes moved up.'
-                    : ', and the rest reordered.'}
+                    ? `${hiddenCount} ${hiddenCount === 1 ? 'title is' : 'titles are'} gone because you said no. `
+                    : ''}
+                  New ones took their place, and anything like what you saved moved up.
                 </Text>
-                <Pressable
-                  onPress={clearFeedback}
-                  style={({ pressed }) => [styles.reset, pressed && styles.pressed]}>
-                  <Text style={styles.resetText}>Start the list over</Text>
-                </Pressable>
+                <View style={styles.changedActions}>
+                  {savedCount > 0 ? (
+                    <Pressable
+                      onPress={() => router.push('/library')}
+                      style={({ pressed }) => [styles.libraryButton, pressed && styles.pressed]}>
+                      <Text style={styles.libraryButtonText}>Open library ({savedCount})</Text>
+                    </Pressable>
+                  ) : null}
+                  <Pressable
+                    onPress={clearFeedback}
+                    style={({ pressed }) => [styles.reset, pressed && styles.pressed]}>
+                    <Text style={styles.resetText}>Start the list over</Text>
+                  </Pressable>
+                </View>
               </View>
             ) : null}
 
             {items.map((item) => {
-              const saidYes = feedback.some((f) => f.mediaId === item.id && f.liked);
+              const link = linkFor(item);
               return (
                 <View key={item.id} style={styles.card}>
                   <Text style={styles.cardType}>{item.type}</Text>
                   <Text style={styles.cardTitle}>{item.title}</Text>
                   <Text style={styles.cardBody}>{item.description}</Text>
 
+                  {item.contentNote ? (
+                    <View style={styles.noteBlock}>
+                      <Text style={styles.noteLabel}>Heads up</Text>
+                      <Text style={styles.noteBody}>{item.contentNote}</Text>
+                    </View>
+                  ) : null}
+
                   <View style={styles.why}>
                     <Text style={styles.whyLabel}>Why this</Text>
                     <Text style={styles.whyText}>{item.reason}</Text>
                   </View>
 
-                  <Text style={styles.askLabel}>Would this help?</Text>
+                  <Pressable
+                    onPress={() => Linking.openURL(link.url)}
+                    style={({ pressed }) => [styles.linkButton, pressed && styles.pressed]}>
+                    <Text style={styles.linkButtonText}>{link.label}</Text>
+                  </Pressable>
+
+                  <Text style={styles.askLabel}>Keep this one?</Text>
                   <View style={styles.actions}>
                     <Pressable
                       onPress={() => recordFeedback(item.id, true)}
-                      style={({ pressed }) => [
-                        styles.action,
-                        styles.yes,
-                        saidYes && styles.yesActive,
-                        pressed && styles.pressed,
-                      ]}>
-                      <Text style={[styles.actionText, saidYes && styles.yesActiveText]}>
-                        {saidYes ? 'Yes, more like this' : 'Yes'}
-                      </Text>
+                      style={({ pressed }) => [styles.action, styles.yes, pressed && styles.pressed]}>
+                      <Text style={styles.actionText}>Save it</Text>
                     </Pressable>
                     <Pressable
                       onPress={() => recordFeedback(item.id, false)}
-                      style={({ pressed }) => [
-                        styles.action,
-                        styles.no,
-                        pressed && styles.pressed,
-                      ]}>
-                      <Text style={[styles.actionText, styles.noText]}>No</Text>
+                      style={({ pressed }) => [styles.action, styles.no, pressed && styles.pressed]}>
+                      <Text style={[styles.actionText, styles.noText]}>Not this</Text>
                     </Pressable>
                   </View>
                 </View>
@@ -224,6 +237,41 @@ const styles = StyleSheet.create({
     gap: space.sm,
   },
   changedText: { fontSize: 15, lineHeight: 23, color: colors.text },
+  changedActions: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: space.md },
+  libraryButton: {
+    backgroundColor: colors.accent,
+    borderRadius: radius,
+    paddingVertical: space.sm,
+    paddingHorizontal: space.md,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  libraryButtonText: { fontSize: 15, fontWeight: '600', color: '#FFFFFF' },
+  noteBlock: {
+    backgroundColor: colors.noteSoft,
+    borderRadius: radius - 4,
+    borderLeftWidth: 5,
+    borderLeftColor: colors.note,
+    padding: space.md,
+    gap: 2,
+  },
+  noteLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.note,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  noteBody: { fontSize: 15, lineHeight: 23, color: colors.text },
+  linkButton: {
+    backgroundColor: colors.accent,
+    borderRadius: radius,
+    paddingVertical: space.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 52,
+  },
+  linkButtonText: { fontSize: 16, fontWeight: '600', color: '#FFFFFF' },
   reset: {
     alignSelf: 'flex-start',
     paddingVertical: space.sm,

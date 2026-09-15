@@ -20,6 +20,7 @@ export default function RootLayout() {
         <Stack.Screen name="resources" options={{ title: 'Find help' }} />
         <Stack.Screen name="resource/[id]" options={{ title: 'Resource' }} />
         <Stack.Screen name="feed" options={{ title: 'Right now' }} />
+        <Stack.Screen name="library" options={{ title: 'Your library' }} />
       </Stack>
     </AppStateProvider>
   );

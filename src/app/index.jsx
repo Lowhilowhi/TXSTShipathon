@@ -39,6 +39,15 @@ export default function HomeScreen() {
           </Text>
         </Pressable>
 
+        <Pressable
+          onPress={() => router.push('/library')}
+          style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
+          <Text style={styles.cardTitle}>Your library</Text>
+          <Text style={styles.cardBody}>
+            Everything you said yes to, with a link to watch, read or listen to it.
+          </Text>
+        </Pressable>
+
         <Text style={styles.footer}>
           Nothing you do here is stored. Closing the app clears everything.
         </Text>

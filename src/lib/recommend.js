@@ -164,11 +164,16 @@ export function recommend({ mood, recentAcuity = [], feedback = [], limit = 6 })
 
   const catalog = mediaData.media;
   const { liked, disliked } = feedbackTags(feedback, catalog, target.tags);
+
+  // Anything you have answered leaves the feed. A yes moves it to your library,
+  // a no discards it, and either way something new takes the slot. Without this
+  // a liked item scores itself higher on its own tags and pins to the top
+  // forever, which looks exactly like a frozen button.
+  const answeredIds = feedback.map((f) => f.mediaId);
   const rejectedIds = feedback.filter((f) => !f.liked).map((f) => f.mediaId);
 
   const eligible = catalog.filter((item) => {
-    // A no removes that exact title from the list outright.
-    if (rejectedIds.includes(item.id)) return false;
+    if (answeredIds.includes(item.id)) return false;
     // Under high pressure, the most intense material is removed too.
     if (label === 'high' && item.intensity >= 3) return false;
     return true;
@@ -199,7 +204,37 @@ export function recommend({ mood, recentAcuity = [], feedback = [], limit = 6 })
     label,
     items: scored.slice(0, limit),
     hiddenCount: rejectedIds.length,
+    savedCount: feedback.length - rejectedIds.length,
   };
+}
+
+/**
+ * Where to actually find this thing, built from the title and type.
+ *
+ * These are search links rather than hardcoded deep links on purpose. What is
+ * streaming where changes constantly and differs by country, so a stored
+ * "watch on X" URL would be wrong within months. A search always resolves.
+ */
+export function linkFor(item) {
+  const q = encodeURIComponent(item.title);
+  switch (item.type) {
+    case 'book':
+      return { label: 'Find this book', url: `https://openlibrary.org/search?q=${q}` };
+    case 'music':
+    case 'podcast':
+      return { label: 'Listen on Spotify', url: `https://open.spotify.com/search/${q}` };
+    default:
+      return { label: 'Find where to watch', url: `https://www.justwatch.com/us/search?q=${q}` };
+  }
+}
+
+/** The saved items, newest first, resolved back to full catalog entries. */
+export function savedItems(feedback) {
+  return feedback
+    .filter((f) => f.liked)
+    .map((f) => mediaData.media.find((m) => m.id === f.mediaId))
+    .filter(Boolean)
+    .reverse();
 }
 
 /**
