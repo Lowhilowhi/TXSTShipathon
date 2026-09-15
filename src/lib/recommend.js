@@ -216,14 +216,22 @@ export function recommend({ mood, recentAcuity = [], feedback = [], limit = 6 })
  * "watch on X" URL would be wrong within months. A search always resolves.
  */
 export function linkFor(item) {
-  const q = encodeURIComponent(item.title);
+  // Titles carry the author or artist after a dash, and that dash breaks most
+  // search engines: "Beach Read - Emily Henry" returns nothing, while
+  // "Beach Read Emily Henry" finds it immediately.
+  const q = encodeURIComponent(item.title.replace(/ - /g, ' '));
+
   switch (item.type) {
     case 'book':
-      return { label: 'Find this book', url: `https://openlibrary.org/search?q=${q}` };
+      // A plain web search always returns something useful here, including
+      // libraries, shops and the author's own page.
+      return { label: 'Find this book', url: `https://www.google.com/search?q=${q}+book` };
     case 'music':
     case 'podcast':
       return { label: 'Listen on Spotify', url: `https://open.spotify.com/search/${q}` };
     default:
+      // JustWatch is a legal streaming guide. It hosts nothing itself, it just
+      // says which services currently carry a title and what a rental costs.
       return { label: 'Find where to watch', url: `https://www.justwatch.com/us/search?q=${q}` };
   }
 }
